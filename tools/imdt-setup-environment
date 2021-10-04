@@ -1,0 +1,59 @@
+#!/bin/bash
+#
+# IMDT Yocto Project Build Environment Setup Script
+#
+# Copyright (c) 2021 IMD Technologies Ltd.
+#
+
+function display_usage {
+    echo "Usage:"
+    echo ""
+    echo "DISTRO=<distro name> MACHINE=<machine name> ./imdt-setup-environment <build dir>"
+    echo ""
+    exit 1
+}
+
+. sources/meta-imx/tools/setup-utils.sh
+
+if [ "$#" -lt 1 ]; then
+    display_usage
+fi
+
+BUILD_DIR=$1
+
+if [ -d $BUILD_DIR ]; then
+    . ./setup-environment $BUILD_DIR
+else
+
+    if [ -z $DISTRO ]; then
+        display_usage
+    fi
+
+    if [ -z $MACHINE ]; then
+        display_usage
+    fi
+
+    . ./setup-environment $BUILD_DIR
+
+    echo "" >> ./conf/bblayers.conf
+
+    # Use NXP's hook_in_layer function to resolve any file-based overlay conflicts
+
+    hook_in_layer meta-imx/meta-bsp
+    hook_in_layer meta-imx/meta-sdk
+    hook_in_layer meta-imx/meta-ml
+    hook_in_layer meta-nxp-demo-experience
+
+    echo "" >> ./conf/bblayers.conf
+    echo "BBLAYERS += \"\${BSPDIR}/sources/meta-browser/meta-chromium\"" >> $BUILD_DIR/conf/bblayers.conf
+    echo "BBLAYERS += \"\${BSPDIR}/sources/meta-clang\"" >> ./conf/bblayers.conf
+    echo "BBLAYERS += \"\${BSPDIR}/sources/meta-openembedded/meta-gnome\"" >> ./conf/bblayers.conf
+    echo "BBLAYERS += \"\${BSPDIR}/sources/meta-openembedded/meta-networking\"" >> ./conf/bblayers.conf
+    echo "BBLAYERS += \"\${BSPDIR}/sources/meta-openembedded/meta-filesystems\"" >> ./conf/bblayers.conf
+    echo "BBLAYERS += \"\${BSPDIR}/sources/meta-qt5\"" >> ./conf/bblayers.conf
+    echo "BBLAYERS += \"\${BSPDIR}/sources/meta-python2\"" >> ./conf/bblayers.conf
+
+    echo "" >> ./conf/bblayers.conf
+    echo "BBLAYERS += \"\${BSPDIR}/sources/meta-imdt-imx\"" >> ./conf/bblayers.conf
+
+fi
