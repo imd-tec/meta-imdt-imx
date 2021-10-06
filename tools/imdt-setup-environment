@@ -35,7 +35,9 @@ else
 
     . ./setup-environment $BUILD_DIR
 
-    echo "" >> ./conf/bblayers.conf
+    if [ -f ./conf/bblayers.conf ]; then
+        echo "" >> ./conf/bblayers.conf
+    fi
 
     # Use NXP's hook_in_layer function to resolve any file-based overlay conflicts
 
@@ -55,5 +57,10 @@ else
 
     echo "" >> ./conf/bblayers.conf
     echo "BBLAYERS += \"\${BSPDIR}/sources/meta-imdt-imx\"" >> ./conf/bblayers.conf
+
+    if [ -d ../sources/meta-imdt-imx-dev ]; then
+        echo "" >> ./conf/bblayers.conf
+        echo "BBLAYERS += \"\${BSPDIR}/sources/meta-imdt-imx-dev\"" >> ./conf/bblayers.conf
+    fi
 
 fi
