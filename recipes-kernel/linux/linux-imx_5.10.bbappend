@@ -5,6 +5,7 @@ SRCREV = "${AUTOREV}"
 
 KERNEL_DEFCONFIG = "imx_v8_defconfig"
 KERNEL_DEFCONFIG_imx8mp-imdt-picoevk = "imdt_picoevk_defconfig"
+KERNEL_DEFCONFIG_imx8mp-imdt-uevk = "imdt_uevk_defconfig"
 
 do_copy_defconfig() {
     install -d ${B}

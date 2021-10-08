@@ -8,3 +8,16 @@ do_install_append_imx8mp-imdt-picoevk() {
 }
 
 FILES_${PN}_append_imx8mp-imdt-picoevk = " ${sysconfdir}/modprobe.d"
+
+
+FILESEXTRAPATHS_append_imx8mp-imdt-uevk := "${THISDIR}/${PN}:"
+
+SRC_URI_append_imx8mp-imdt-uevk = " file://sensor.conf "
+
+do_install_append_imx8mp-imdt-uevk() {
+    install -d ${D}${sysconfdir}/modprobe.d
+    install -m 0644 ${WORKDIR}/sensor.conf ${D}${sysconfdir}/modprobe.d
+}
+
+FILES_${PN}_append_imx8mp-imdt-uevk = " ${sysconfdir}/modprobe.d"
+

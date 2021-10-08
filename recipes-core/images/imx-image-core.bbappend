@@ -8,3 +8,11 @@ IMAGE_INSTALL_append_imx8mp-imdt-picoevk = " \
     v4l-utils \
     socat picocom \
 "
+
+IMAGE_INSTALL_append_imx8mp-imdt-uevk = " \
+    linux-firmware \
+    packagegroup-fsl-gstreamer1.0 \
+    packagegroup-fsl-gstreamer1.0-full \
+    yavta \
+    v4l-utils \
+"
