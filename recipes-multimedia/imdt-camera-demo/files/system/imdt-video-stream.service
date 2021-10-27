@@ -6,5 +6,5 @@
 Description=Video Stream from CSI1
 
 [Service]
-ExecStart=/opt/imdt/camera-demo/bin/camera1-stream.sh
+ExecStart=/opt/imdt/camera-demo/bin/stream-video.sh
 

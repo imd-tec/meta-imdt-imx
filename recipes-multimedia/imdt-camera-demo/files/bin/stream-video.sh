@@ -1,4 +1,7 @@
 #!/bin/sh
+#
+# Copyright (c) 2021 IMD Technologies
+#
 
 rm -f /opt/imdt/camera-demo/www/stream1/*.ts
 rm -f /opt/imdt/camera-demo/www/stream1/*.m3u8

@@ -38,7 +38,6 @@ IMAGE_INSTALL += " \
 
 IMAGE_INSTALL_append_imx8mp-imdt-picoevk = " \
     wpa-supplicant wireless-tools hostapd dhcpcd wireless-regdb-static \
-    imdt-camera-demo \
 "
 
 export IMAGE_BASENAME = "imdt-image-core"
