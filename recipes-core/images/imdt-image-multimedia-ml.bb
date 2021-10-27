@@ -69,6 +69,10 @@ IMAGE_INSTALL += " \
     ${OPENCV_PKGS} \
 "
 
+IMAGE_INSTALL_append_imx8mp-imdt-uevk-2g = " \
+    imdt-camera-demo \
+"
+
 IMAGE_INSTALL_append_imx8mp-imdt-uevk = " \
     imdt-camera-demo \
 "
