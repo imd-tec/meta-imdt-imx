@@ -4,7 +4,7 @@ SRC_URI_append_imx8mp-imdt-picoevk = " \
     file://25-wlan.network \
 "
 
-FILES_${PN}_imx8mp-imdt-picoevk += " \
+FILES_${PN}_append_imx8mp-imdt-picoevk = " \
     ${sysconfdir}/systemd/network/25-wlan.network \
 "
 
