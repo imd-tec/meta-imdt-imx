@@ -3,7 +3,9 @@
 # Copyright (c) 2021 IMD Technologies
 #
 
-rf -f /opt/imdt/camera-demo/www/snapshots/*.jpg
-mkdir -p /opt/imdt/camera-demo/www/snapshots
+mkdir -p /opt/imdt/camera-demo/www/snapshots/thumbnails
+mkdir -p /opt/imdt/camera-demo/www/stream1
 
-python3 -m http.server 80 --directory /opt/imdt/camera-demo/www/
+cd /opt/imdt/camera-demo/www
+
+python3 server.py

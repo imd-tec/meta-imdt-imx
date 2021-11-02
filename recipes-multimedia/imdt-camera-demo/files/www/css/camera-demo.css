@@ -1,0 +1,21 @@
+
+a {
+    text-decoration: none;
+}
+
+body {
+    background: black;
+}
+
+.navbar-logo {
+    width: 32px;
+    height: 29px;
+    filter: grayscale(2) invert(1) brightness(5);
+}
+
+.watermark {
+    filter: grayscale(2) invert(1) brightness(5) opacity(0.4);
+    float: left;
+    z-index: 100;
+    position: absolute;
+}
