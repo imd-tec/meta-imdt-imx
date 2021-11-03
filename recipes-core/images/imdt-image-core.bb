@@ -21,6 +21,7 @@ IMAGE_FEATURES += " \
 SDKIMAGE_FEATURES_append = " \
     staticdev-pkgs \
 "
+
 CLINFO ?= ""
 CLINFO_imxgpu = "clinfo"
 CLINFO_mx8mm = ""
@@ -34,6 +35,14 @@ IMAGE_INSTALL += " \
     curl \
     linux-firmware \
     ${CLINFO} \
+"
+
+IMAGE_INSTALL_append = " \
+    imdt-camera-demo \
+    packagegroup-fsl-gstreamer1.0 \
+    packagegroup-fsl-gstreamer1.0-full \
+    v4l-utils \
+    imagemagick \
 "
 
 IMAGE_INSTALL_append_imx8mp-imdt-picoevk = " \
