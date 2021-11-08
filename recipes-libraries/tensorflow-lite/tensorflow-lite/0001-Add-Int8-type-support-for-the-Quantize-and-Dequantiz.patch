@@ -1,0 +1,61 @@
+From 477f3239d1941865cee8172992eb0ce864513bd1 Mon Sep 17 00:00:00 2001
+From: Paul Thomson <pault@imd-tec.com>
+Date: Mon, 8 Nov 2021 15:21:11 +0000
+Subject: [PATCH] Add Int8 type support for the Quantize and Dequantize ops
+
+This change is based on commit 732ca6564d35, which was applied to v2.4.1
+but not carried over to v2.5.0.
+---
+ .../lite/delegates/nnapi/nnapi_delegate.cc       | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/tensorflow/lite/delegates/nnapi/nnapi_delegate.cc b/tensorflow/lite/delegates/nnapi/nnapi_delegate.cc
+index 10e4a8761c2..ce9675c5490 100644
+--- a/tensorflow/lite/delegates/nnapi/nnapi_delegate.cc
++++ b/tensorflow/lite/delegates/nnapi/nnapi_delegate.cc
+@@ -315,9 +315,15 @@ bool NeedInt8Conversion(const TfLiteContext* context, int builtin_code,
+     case kTfLiteBuiltinTanh:
+     case kTfLiteBuiltinTile:
+     case kTfLiteBuiltinTopkV2:
+-    case kTfLiteBuiltinTranspose: {
++    case kTfLiteBuiltinTranspose:
++    case kTfLiteBuiltinDequantize: {
+       return input_type == kTfLiteInt8;
+     }
++    case kTfLiteBuiltinQuantize: {
++        const int output_id = node->outputs->data[0];
++        const TfLiteType output_type = context->tensors[output_id].type;
++        return output_type == kTfLiteInt8;
++    }
+     default:
+       return false;
+   }
+@@ -2120,6 +2126,7 @@ bool NNAPIDelegateKernel::Validate(
+       } else {
+         EXPECT_INPUT_TYPE_IN(input.type, kTfLiteUInt8, kTfLiteInt8);
+ 
++#ifdef __ANDROID__
+         if (android_sdk_version == kMinSdkVersionForNNAPI12 &&
+             input.type == kTfLiteInt8) {
+           const auto zero_point = input.params.zero_point;
+@@ -2129,6 +2136,7 @@ bool NNAPIDelegateKernel::Validate(
+                  "symmetric quantization.",
+                  &val_ctx);
+         }
++#endif
+       }
+     } break;
+     case kTfLiteBuiltinFloor: {
+@@ -2684,9 +2692,9 @@ bool NNAPIDelegateKernel::Validate(
+       }
+       const auto output_type = context->tensors[node->outputs->data[0]].type;
+       if (android_sdk_version < kMinSdkVersionForNNAPI13) {
+-        Expect(output_type == kTfLiteUInt8,
+-               NNAPIValidationFailureType::kUnsupportedOutputType,
+-               "Output should be kTfLiteUInt8.", &val_ctx);
++        Expect(((output_type == kTfLiteUInt8) || (output_type == kTfLiteInt8)),
++             NNAPIValidationFailureType::kUnsupportedOutputType,
++             "Output should be kTfLiteUInt8 or kTfLiteInt8.", &val_ctx);
+       } else {
+         ExpectTypeIn(output_type, {kTfLiteUInt8, kTfLiteInt8},
+                      NNAPIValidationFailureType::kUnsupportedOutputType,
