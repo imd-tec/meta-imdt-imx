@@ -10,3 +10,5 @@ S = "${WORKDIR}/git"
 inherit cmake pkgconfig
 
 EXTRA_OECMAKE = ""
+
+ALLOW_EMPTY_${PN} = "1"

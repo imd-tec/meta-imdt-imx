@@ -13,3 +13,5 @@ EXTRA_OECMAKE = ""
 
 DEPENDS = "xsimd xtl"
 RDEPENDS_${PN} += "xsimd xtl"
+
+ALLOW_EMPTY_${PN} = "1"
