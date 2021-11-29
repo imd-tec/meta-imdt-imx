@@ -39,6 +39,7 @@ IMAGE_INSTALL += " \
 
 IMAGE_INSTALL_append = " \
     imdt-camera-demo \
+    imdt-ml-demo \
     packagegroup-fsl-gstreamer1.0 \
     packagegroup-fsl-gstreamer1.0-full \
     v4l-utils \

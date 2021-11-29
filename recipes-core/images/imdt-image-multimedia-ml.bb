@@ -71,6 +71,7 @@ IMAGE_INSTALL += " \
 
 IMAGE_INSTALL_append = " \
     imdt-camera-demo \
+    imdt-ml-demo \
     v4l-utils \
     imagemagick \
 "
