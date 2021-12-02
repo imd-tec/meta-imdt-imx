@@ -1,0 +1,455 @@
+From 207fcdffd6ed56de48eed0a6c7baaa081a2d27ea Mon Sep 17 00:00:00 2001
+From: Paul Thomson <pault@imd-tec.com>
+Date: Thu, 2 Dec 2021 18:09:22 +0000
+Subject: [PATCH] Remove debug statements from VX delegate
+
+---
+ .../delegates/vx-delegate/delegate_main.cc    | 20 ++---
+ .../lite/delegates/vx-delegate/op_map.cc      | 78 +++++++++----------
+ 2 files changed, 49 insertions(+), 49 deletions(-)
+
+diff --git a/tensorflow/lite/delegates/vx-delegate/delegate_main.cc b/tensorflow/lite/delegates/vx-delegate/delegate_main.cc
+index c6a471909f5..670b75806f7 100644
+--- a/tensorflow/lite/delegates/vx-delegate/delegate_main.cc
++++ b/tensorflow/lite/delegates/vx-delegate/delegate_main.cc
+@@ -142,7 +142,7 @@ tim::vx::DataType TfLiteDtypeToVsiDtype(TfLiteType type) {
+     case kTfLiteFloat16:
+       return tim::vx::DataType::FLOAT16;
+     default:
+-      TFLITE_LOG(ERROR) << "Unsuppoted type:" << type;
++      TFLITE_LOG(ERROR) << "Unsupported type:" << type;
+       break;
+   }
+ 
+@@ -387,7 +387,7 @@ TfLiteDelegate* Delegate::Create() {
+ 
+ std::unique_ptr<vx::delegate::OpData> Delegate::Init(
+     TfLiteContext* context, const TfLiteDelegateParams* params) {
+-  TFLITE_LOG(INFO) << "vx_delegate Delegate::Init";
++  // TFLITE_LOG(INFO) << "vx_delegate Delegate::Init";
+ 
+   compiled_ = false;
+   tensors_.resize(context->tensors_size + 1 /* for placeholder*/);
+@@ -467,14 +467,14 @@ std::unique_ptr<vx::delegate::OpData> Delegate::Init(
+ TfLiteStatus Delegate::Prepare(const OpData& op_data,
+                                TfLiteContext* context,
+                                TfLiteNode* node) {
+-  TFLITE_LOG(INFO) << "Delegate::Prepare node:" << node->user_data;
++  // TFLITE_LOG(INFO) << "Delegate::Prepare node:" << node->user_data;
+   return kTfLiteOk;
+ }
+ 
+ TfLiteStatus Delegate::Invoke(const OpData& op_data,
+                               TfLiteContext* context,
+                               TfLiteNode* node) {
+-  TFLITE_LOG(INFO) << "Delegate::Invoke node:" << node->user_data;
++  // TFLITE_LOG(INFO) << "Delegate::Invoke node:" << node->user_data;
+   if (!compiled_) {
+     // TODO(bo): Handling multi-thread use case
+     context_ = tim::vx::Context::Create();
+@@ -567,7 +567,7 @@ TfLiteStatus Delegate::Invoke(const OpData& op_data,
+       }
+     }
+ 
+-    TFLITE_LOG(INFO) << "Verifying graph";
++    // TFLITE_LOG(INFO) << "Verifying graph";
+     // Do layout inference and get a new graph(first) and a tensor map(second).
+     layout_infered_ = tim::transform::LayoutInference(graph_, context_);
+     compiled_ = layout_infered_.first->Compile();
+@@ -576,13 +576,13 @@ TfLiteStatus Delegate::Invoke(const OpData& op_data,
+       return kTfLiteDelegateError;
+     }
+ 
+-    TFLITE_LOG(INFO) << "Verified graph";
++    // TFLITE_LOG(INFO) << "Verified graph";
+   }
+ 
+   // TODO(derekjchow): Return error if compilation failed.
+   for (int tensor_idx : op_data.subgraph_inputs) {
+     const TfLiteTensor& tf_tensor = context->tensors[tensor_idx];
+-    TFLITE_LOG(INFO) << "Copying input " << tensor_idx << ":" << tf_tensor.name;
++    // TFLITE_LOG(INFO) << "Copying input " << tensor_idx << ":" << tf_tensor.name;
+     auto src_input_tensor = tensors_[tensor_idx];
+     if (!src_input_tensor.get()) {
+       TFLITE_LOG(FATAL) << "Failed to copy input tensor!";
+@@ -595,14 +595,14 @@ TfLiteStatus Delegate::Invoke(const OpData& op_data,
+     infered_input_tensor->CopyDataToTensor(const_cast<void*>(tensor_data));
+   }
+ 
+-  TFLITE_LOG(INFO) << "Invoking graph";
++  // TFLITE_LOG(INFO) << "Invoking graph";
+   if (!layout_infered_.first->Run()) {
+     TFLITE_LOG(FATAL) << "Failed to run graph";
+   }
+ 
+   for (int tensor_idx : op_data.subgraph_outputs) {
+     TfLiteTensor& tf_tensor = context->tensors[tensor_idx];
+-    TFLITE_LOG(INFO) << "Copying output " << tensor_idx << ":" << tf_tensor.name;
++    // TFLITE_LOG(INFO) << "Copying output " << tensor_idx << ":" << tf_tensor.name;
+     auto src_output_tensor = tensors_[tensor_idx];
+     if (!src_output_tensor.get()) {
+       TFLITE_LOG(FATAL) << "Failed to copy output tensor!";
+@@ -617,7 +617,7 @@ TfLiteStatus Delegate::Invoke(const OpData& op_data,
+   // Copy output states to input states
+   for (int tensor_idx : op_data.subgraph_states) {
+     TfLiteTensor& tf_tensor = context->tensors[tensor_idx];
+-    TFLITE_LOG(INFO) << "Copying state " << tensor_idx << ":" << tf_tensor.name;
++    // TFLITE_LOG(INFO) << "Copying state " << tensor_idx << ":" << tf_tensor.name;
+     auto src_state_tensor = state_tensors_[tensor_idx];
+     if (!src_state_tensor.get()) {
+       TFLITE_LOG(FATAL) << "Disaster!";
+diff --git a/tensorflow/lite/delegates/vx-delegate/op_map.cc b/tensorflow/lite/delegates/vx-delegate/op_map.cc
+index 3067d54f014..6d1c7819f60 100644
+--- a/tensorflow/lite/delegates/vx-delegate/op_map.cc
++++ b/tensorflow/lite/delegates/vx-delegate/op_map.cc
+@@ -75,7 +75,7 @@ inline tim::vx::PadType TflitePadTypeToVsiPadType(TfLitePadding pad) {
+     case kTfLitePaddingSame:
+       return tim::vx::PadType::SAME;
+     default:
+-      TFLITE_LOG(ERROR) << "Unsuppoted pad type:" << pad;
++      TFLITE_LOG(ERROR) << "Unsupported pad type:" << pad;
+       break;
+   }
+ 
+@@ -402,7 +402,7 @@ struct SimpleOpMapper : public OpMapperBase<EmptyStructPlaceholder> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Creating " << name_ << " op";
++    // TFLITE_LOG(INFO) << "Creating " << name_ << " op";
+ 
+     auto op = delegate->GetGraph()->CreateOperation<T_OperationType>();
+     (*op).BindInputs(inputs).BindOutputs(outputs);
+@@ -424,7 +424,7 @@ struct SimpleOpWithFusedActiovationMapper
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Creating " << name_ << " op";
++    // TFLITE_LOG(INFO) << "Creating " << name_ << " op";
+ 
+     auto op = delegate->GetGraph()->CreateOperation<T_OperationType>();
+     (*op).BindInputs(inputs).BindOutputs(outputs);
+@@ -475,7 +475,7 @@ struct FullyConnectedMapper
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Creating fully connected op";
++    // TFLITE_LOG(INFO) << "Creating fully connected op";
+     const auto builtin =
+         reinterpret_cast<const TfLiteFullyConnectedParams*>(params);
+     auto input_tensor = inputs[0];
+@@ -519,7 +519,7 @@ struct SoftmaxMapper : public OpMapperBase<TfLiteSoftmaxParams> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Creating softmax op";
++    // TFLITE_LOG(INFO) << "Creating softmax op";
+     auto builtin = reinterpret_cast<const TfLiteSoftmaxParams*>(params);
+     auto op = delegate->GetGraph()->CreateOperation<tim::vx::ops::Softmax>(
+         builtin->beta, 0);
+@@ -549,7 +549,7 @@ struct Conv2dMapper : public Conv2dKind<TfLiteConvParams> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(ERROR) << "Creating Conv2d op";
++    // TFLITE_LOG(ERROR) << "Creating Conv2d op";
+     const auto builtin = reinterpret_cast<const TfLiteConvParams*>(params);
+ 
+     uint32_t weights = inputs[1]->GetShape()[3];
+@@ -582,7 +582,7 @@ struct TransposeConvMapper
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Create TransposeConv op";
++    // TFLITE_LOG(INFO) << "Create TransposeConv op";
+     const auto builtin =
+         reinterpret_cast<const TfLiteTransposeConvParams*>(params);
+     auto padding = TflitePadTypeToVsiPadType(builtin->padding);
+@@ -643,7 +643,7 @@ struct Pool2dMapper : public Conv2dKind<TfLitePoolParams> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Creating Pool2d(" << static_cast<int>(poolType) << ") op";
++    // TFLITE_LOG(INFO) << "Creating Pool2d(" << static_cast<int>(poolType) << ") op";
+     const auto builtin = reinterpret_cast<const TfLitePoolParams*>(params);
+ 
+     auto op = delegate->GetGraph()->CreateOperation<tim::vx::ops::Pool2d>(
+@@ -683,7 +683,7 @@ struct DepthwiseConv2dMapper : public Conv2dKind<TfLiteDepthwiseConvParams> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(WARN) << "Creating DepthwiseConv2d op";
++    // TFLITE_LOG(WARN) << "Creating DepthwiseConv2d op";
+     const auto builtin =
+         reinterpret_cast<const TfLiteDepthwiseConvParams*>(params);
+ 
+@@ -717,7 +717,7 @@ struct ConcatenationMapper
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Creating Concatenation op";
++    // TFLITE_LOG(INFO) << "Creating Concatenation op";
+     const auto builtin =
+         reinterpret_cast<const TfLiteConcatenationParams*>(params);
+     auto output_tensor = outputs[0];
+@@ -743,7 +743,7 @@ struct LocalResponseNormalizationMapper
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Creating LRN op";
++    // TFLITE_LOG(INFO) << "Creating LRN op";
+     const auto builtin =
+         reinterpret_cast<const TfLiteLocalResponseNormParams*>(params);
+     auto op = delegate->GetGraph()
+@@ -768,7 +768,7 @@ struct L2NormalizationMapper
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Creating L2Normaliztion op";
++    // TFLITE_LOG(INFO) << "Creating L2Normaliztion op";
+     const auto builtin = reinterpret_cast<const TfLiteL2NormParams*>(params);
+ 
+     auto op =
+@@ -787,7 +787,7 @@ struct ReshapeMapper : public OpMapperBase<TfLiteReshapeParams> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Creating Reshape op";
++    // TFLITE_LOG(INFO) << "Creating Reshape op";
+     const auto builtin = reinterpret_cast<const TfLiteReshapeParams*>(params);
+     std::vector<uint32_t> new_shape;
+ 
+@@ -820,7 +820,7 @@ struct StridedSliceMapper : public OpMapperBase<TfLiteStridedSliceParams> {
+   virtual bool IsOpSupported(TfLiteContext* context,
+                              TfLiteNode* node,
+                              const TfLiteRegistration* registration) const {
+-    TFLITE_LOG(INFO) << "Check  StridedSlice";
++    // TFLITE_LOG(INFO) << "Check  StridedSlice";
+     const auto builtin =
+         reinterpret_cast<const TfLiteStridedSliceParams*>(node->builtin_data);
+     if (builtin->new_axis_mask) {
+@@ -838,7 +838,7 @@ struct StridedSliceMapper : public OpMapperBase<TfLiteStridedSliceParams> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Creating StridedSlice op";
++    // TFLITE_LOG(INFO) << "Creating StridedSlice op";
+     const auto builtin =
+         reinterpret_cast<const TfLiteStridedSliceParams*>(params);
+     auto input_tensor = inputs[0];
+@@ -942,7 +942,7 @@ struct PadMapper : public OpMapperBase<EmptyStructPlaceholder> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Creating Pad op";
++    // TFLITE_LOG(INFO) << "Creating Pad op";
+     auto padding = inputs[1];
+     std::vector<uint32_t> padding_shape = padding->GetShape();
+     uint32_t pad = 1;
+@@ -989,7 +989,7 @@ struct ResizeMapper
+   virtual bool IsOpSupported(TfLiteContext* context,
+                              TfLiteNode* node,
+                              const TfLiteRegistration* registration) const {
+-    TFLITE_LOG(INFO) << "Check Resize(" << static_cast<int>(resizeType) << ")";
++    // TFLITE_LOG(INFO) << "Check Resize(" << static_cast<int>(resizeType) << ")";
+ 
+     int input_index = node->inputs->data[0];
+     if ((context->tensors[input_index].type == kTfLiteInt8 ||
+@@ -1012,7 +1012,7 @@ struct ResizeMapper
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Creating Resize(" << static_cast<int>(resizeType) << ") op";
++    // TFLITE_LOG(INFO) << "Creating Resize(" << static_cast<int>(resizeType) << ") op";
+     auto input_shape = inputs[0]->GetShape();
+     uint32_t resize_rank = inputs[1]->GetShape()[0];
+     std::vector<int32_t> output_shape(resize_rank);
+@@ -1065,7 +1065,7 @@ struct AddNMapper : public OpMapperBase<EmptyStructPlaceholder> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Creating AddN op";
++    // TFLITE_LOG(INFO) << "Creating AddN op";
+     auto output_tensor = outputs[0];
+     auto op = delegate->GetGraph()->CreateOperation<tim::vx::ops::AddN>(
+         inputs.size());
+@@ -1102,7 +1102,7 @@ struct SplitMapper : public OpMapperBase<TfLiteSplitParams> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Creating Split op";
++    // TFLITE_LOG(INFO) << "Creating Split op";
+     const auto builtin = reinterpret_cast<const TfLiteSplitParams*>(params);
+ 
+     auto axis_tensor = inputs[0];
+@@ -1135,7 +1135,7 @@ struct SqueezeMapper : public OpMapperBase<TfLiteSqueezeParams> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Creating Squeeze op";
++    // TFLITE_LOG(INFO) << "Creating Squeeze op";
+     auto input_shape = inputs[0]->GetShape();
+     const auto builtin = reinterpret_cast<const TfLiteSqueezeParams*>(params);
+     std::vector<uint32_t> vx_axis(builtin->num_squeeze_dims);
+@@ -1197,7 +1197,7 @@ struct Space2DepthMapper
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Create SpaceToDepth op";
++    // TFLITE_LOG(INFO) << "Create SpaceToDepth op";
+     const auto builtin =
+         reinterpret_cast<const TfLiteSpaceToDepthParams*>(params);
+ 
+@@ -1245,7 +1245,7 @@ struct Depth2SpaceMapper
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Create DepthToSpace op";
++    // TFLITE_LOG(INFO) << "Create DepthToSpace op";
+     const auto builtin =
+         reinterpret_cast<const TfLiteDepthToSpaceParams*>(params);
+ 
+@@ -1266,7 +1266,7 @@ struct PreluMapper : public OpMapperBase<EmptyStructPlaceholder> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Create Prelu op";
++    // TFLITE_LOG(INFO) << "Create Prelu op";
+     auto op = delegate->GetGraph()->CreateOperation<tim::vx::ops::Prelu>(0);
+ 
+     (*op).BindInputs(inputs);
+@@ -1283,7 +1283,7 @@ struct Transpose : public OpMapperBase<TfLiteTransposeParams> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Create Transpose op";
++    // TFLITE_LOG(INFO) << "Create Transpose op";
+     auto perm_tensor = inputs[1];
+     std::vector<uint32_t> perm(perm_tensor->GetShape()[0]);
+     perm_tensor->CopyDataFromTensor(perm.data());
+@@ -1306,7 +1306,7 @@ struct Gather : public OpMapperBase<TfLiteGatherParams> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Create Gather op";
++    // TFLITE_LOG(INFO) << "Create Gather op";
+     const auto builtin = reinterpret_cast<const TfLiteGatherParams*>(params);
+     int axis = vx::delegate::utils::ConvertAxis(builtin->axis,
+                                                 inputs[0]->GetShape().size());
+@@ -1326,7 +1326,7 @@ struct GatherNd : public OpMapperBase<EmptyStructPlaceholder> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Create GatherNd op";
++    // TFLITE_LOG(INFO) << "Create GatherNd op";
+     std::vector<int32_t> axis({0});
+     inputs[1] = ReverseInputTensor(delegate, inputs[1], axis);
+     auto op = delegate->GetGraph()->CreateOperation<tim::vx::ops::GatherNd>();
+@@ -1371,7 +1371,7 @@ struct Batch2Space : public OpMapperBase<TfLiteBatchToSpaceNDParams> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Create Batch2Space op";
++    // TFLITE_LOG(INFO) << "Create Batch2Space op";
+     // the value of block_size_num should be 2.
+     int block_size_num = inputs[1]->GetShape()[0];
+     std::vector<int> block_size(block_size_num);
+@@ -1414,7 +1414,7 @@ struct Space2Batch : public OpMapperBase<TfLiteSpaceToBatchNDParams> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Create SpaceToBatch op";
++    // TFLITE_LOG(INFO) << "Create SpaceToBatch op";
+     // the value of block_size_num should be 2.
+     int block_size_num = inputs[1]->GetShape()[0];
+     std::vector<int> block_size(block_size_num);
+@@ -1452,7 +1452,7 @@ struct ReduceOpMapper : public OpMapperBase<TfLiteReducerParams> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Create reduce" << name_ << "op";
++    // TFLITE_LOG(INFO) << "Create reduce" << name_ << "op";
+     const auto builtin = reinterpret_cast<const TfLiteReducerParams*>(params);
+     auto keep_dims = builtin->keep_dims;
+ 
+@@ -1480,7 +1480,7 @@ struct ExpandDimsMapper : public OpMapperBase<EmptyStructPlaceholder> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Create ExpandDims op";
++    // TFLITE_LOG(INFO) << "Create ExpandDims op";
+ 
+     auto input_shape = inputs[0]->GetShape();
+     int axis = 0;
+@@ -1509,7 +1509,7 @@ struct LeakyReluMapper : public OpMapperBase<TfLiteLeakyReluParams> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Create LeakyRelu op";
++    // TFLITE_LOG(INFO) << "Create LeakyRelu op";
+     const auto builtin = reinterpret_cast<const TfLiteLeakyReluParams*>(params);
+     auto alpha = builtin->alpha;
+     auto op =
+@@ -1546,7 +1546,7 @@ struct Slice : public OpMapperBase<EmptyStructPlaceholder> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Create Slice op";
++    // TFLITE_LOG(INFO) << "Create Slice op";
+     auto input_tensor = inputs[0];
+     auto begin_tensor = inputs[1];
+     auto size_tensor = inputs[2];
+@@ -1617,7 +1617,7 @@ struct Select : public OpMapperBase<EmptyStructPlaceholder> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Create Select op";
++    // TFLITE_LOG(INFO) << "Create Select op";
+ 
+     auto op = delegate->GetGraph()->CreateOperation<tim::vx::ops::Select>();
+ 
+@@ -1639,7 +1639,7 @@ struct LogicalOpMapper : public OpMapperBase<EmptyStructPlaceholder> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Creating Logical" << name_ << " op";
++    // TFLITE_LOG(INFO) << "Creating Logical" << name_ << " op";
+ 
+     auto op = delegate->GetGraph()->CreateOperation<T_OperationType>();
+     (*op).BindInputs(inputs).BindOutputs(outputs);
+@@ -1666,7 +1666,7 @@ struct PackMapper : public OpMapperBase<TfLitePackParams> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Creating Pack op";
++    // TFLITE_LOG(INFO) << "Creating Pack op";
+     const auto builtin = reinterpret_cast<const TfLitePackParams*>(params);
+     uint32_t axis = vx::delegate::utils::ConvertAxis(
+         builtin->axis, inputs[0]->GetShape().size() + 1);
+@@ -1691,7 +1691,7 @@ struct ArgOpMapper : public OpMapperBase<EmptyStructPlaceholder> {
+       std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+       std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+       const void* params) {
+-    TFLITE_LOG(INFO) << "Creating Arg" << name_ << " op";
++    // TFLITE_LOG(INFO) << "Creating Arg" << name_ << " op";
+ 
+     auto axis_tensor = inputs[1];
+     std::vector<int> axis(axis_tensor->GetShape()[0]);
+@@ -1841,7 +1841,7 @@ struct NBGOpMap : public OpMapperBase<TfLiteVsiNpuParams> {
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& inputs,
+                    std::vector<std::shared_ptr<tim::vx::Tensor>>& outputs,
+                    const void* params) override {
+-    TFLITE_LOG(INFO) << "Create NBG op";
++    // TFLITE_LOG(INFO) << "Create NBG op";
+     const auto builtin = reinterpret_cast<const TfLiteVsiNpuParams*>(params);
+     auto op = delegate->GetGraph()->CreateOperation<tim::vx::ops::NBG>(
+         reinterpret_cast<const char*>(builtin->binary),
+@@ -1873,7 +1873,7 @@ struct OperationMapConstructor {
+   T supported_builtins;
+   OperationMapConstructor(
+       const std::map<typename T::key_type, createIOpMapItemFunc> reg) {
+-    TFLITE_LOG(INFO) << "Initialize supported_builtins";
++    // TFLITE_LOG(INFO) << "Initialize supported_builtins";
+     for (const auto& kv : reg) {
+       supported_builtins.insert(std::make_pair(kv.first, kv.second()));
+     }
