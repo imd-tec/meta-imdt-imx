@@ -50,7 +50,6 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     packagegroup-fsl-gstreamer1.0-full \
     yavta \
     firmwared \
-    linux-firmware \
     ${@bb.utils.contains('DISTRO_FEATURES', 'x11 wayland', 'weston-xwayland xterm', '', d)} \
     ${V2X_PKGS} \
 "
@@ -70,6 +69,7 @@ IMAGE_INSTALL += " \
 "
 
 IMAGE_INSTALL_append = " \
+    linux-firmware-ap1302 \
     imdt-camera-demo \
     imdt-ml-demo \
     v4l-utils \
@@ -77,7 +77,11 @@ IMAGE_INSTALL_append = " \
 "
 
 IMAGE_INSTALL_append_imx8mp-imdt-picoevk = " \
-    wpa-supplicant wireless-tools hostapd dhcpcd wireless-regdb-static \
+    wpa-supplicant \
+    wireless-tools \
+    hostapd \
+    dhcpcd \
+    wireless-regdb-static \
 "
 
 TOOLCHAIN_TARGET_TASK_append += " tensorflow-lite-dev armnn-dev onnxruntime-dev"

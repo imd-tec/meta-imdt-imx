@@ -26,3 +26,13 @@ do_install_append_imx8mp-imdt-uevk-2g() {
     # AP1302 ISP firmware
     install -m 0644 ${WORKDIR}/ap1302_ar1335_single_fw.bin ${D}/lib/firmware/ap1302_ar1335_single_fw.bin
 }
+
+PACKAGES =+ "${PN}-ap1302"
+
+FILES_${PN}-ap1302 = " \
+    ${nonarch_base_libdir}/firmware/ap1302_ar1335_single_fw.bin \
+"
+
+FILES_${PN}-bcm43430_append_imx8mp-imdt-picoevk = " \
+    ${nonarch_base_libdir}/firmware/brcm/brcmfmac43430-sdio.imdt,imx8mp-imdt-picoevk.txt \
+"

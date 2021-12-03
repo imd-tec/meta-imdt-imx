@@ -33,11 +33,11 @@ IMAGE_INSTALL += " \
     packagegroup-imx-core-tools \
     packagegroup-imx-security \
     curl \
-    linux-firmware \
     ${CLINFO} \
 "
 
 IMAGE_INSTALL_append = " \
+    linux-firmware-ap1302 \
     imdt-camera-demo \
     imdt-ml-demo \
     packagegroup-fsl-gstreamer1.0 \
@@ -47,7 +47,11 @@ IMAGE_INSTALL_append = " \
 "
 
 IMAGE_INSTALL_append_imx8mp-imdt-picoevk = " \
-    wpa-supplicant wireless-tools hostapd dhcpcd wireless-regdb-static \
+    wpa-supplicant \
+    wireless-tools \
+    hostapd \
+    dhcpcd \
+    wireless-regdb-static \
 "
 
 export IMAGE_BASENAME = "imdt-image-core"
