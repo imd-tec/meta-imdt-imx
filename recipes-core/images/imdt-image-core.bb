@@ -42,6 +42,7 @@ IMAGE_INSTALL_append = " \
     imdt-ml-demo \
     packagegroup-fsl-gstreamer1.0 \
     packagegroup-fsl-gstreamer1.0-full \
+    packagegroup-fsl-tools-audio \
     v4l-utils \
     imagemagick \
 "

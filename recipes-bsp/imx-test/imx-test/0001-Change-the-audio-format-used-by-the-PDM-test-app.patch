@@ -1,0 +1,24 @@
+From b74807f4c4f61357a14e26723800f0f19737e1cb Mon Sep 17 00:00:00 2001
+From: Paul Thomson <pault@imd-tec.com>
+Date: Thu, 16 Dec 2021 09:12:37 +0000
+Subject: [PATCH] Change the audio format used by the PDM test app
+
+Modified the PDM microphone test application to use the audio format
+produced by the micfil device on the i.MX 8M Plus.
+---
+ test/mxc_pdm_test/mxc_pdm_alsa.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/test/mxc_pdm_test/mxc_pdm_alsa.c b/test/mxc_pdm_test/mxc_pdm_alsa.c
+index e888ccd..ea5d6fc 100644
+--- a/test/mxc_pdm_test/mxc_pdm_alsa.c
++++ b/test/mxc_pdm_test/mxc_pdm_alsa.c
+@@ -379,7 +379,7 @@ int mxc_alsa_pdm_init(struct mxc_pdm_priv *priv)
+ 		priv->channels = 1;
+ 	if (!priv->rate)
+ 		priv->rate = 16000;
+-	priv->format = SND_PCM_FORMAT_DSD_U32_LE;
++	priv->format = SND_PCM_FORMAT_S32_LE;
+ 	priv->access_mode = SND_PCM_ACCESS_RW_INTERLEAVED;
+ 	priv->read_pos =  0;
+ 	priv->write_pos = 0;
