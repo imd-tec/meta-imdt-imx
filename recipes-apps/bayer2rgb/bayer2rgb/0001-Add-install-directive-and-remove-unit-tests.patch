@@ -1,0 +1,28 @@
+From 6dc6913861e4eb579321096ab40f45fe1f505a60 Mon Sep 17 00:00:00 2001
+From: Paul Thomson <pault@imd-tec.com>
+Date: Fri, 17 Dec 2021 15:53:36 +0000
+Subject: [PATCH] Add install() directive and remove unit tests
+
+---
+ CMakeLists.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1c9555c..086bac4 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,5 @@
+ cmake_minimum_required(VERSION 3.16)
++include(GNUInstallDirs)
+ 
+ set(CMAKE_TOOLCHAIN_FILE
+   ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake
+@@ -33,6 +34,5 @@ target_link_libraries(debayer m project_options project_warnings)
+ add_executable(${PROJECT_NAME} src/bayer2rgb.c)
+ target_link_libraries(${PROJECT_NAME} debayer project_options project_warnings)
+ 
+-enable_testing()
+-add_subdirectory(test)
+-add_subdirectory(benchmark)
++install(TARGETS ${PROJECT_NAME})
++
