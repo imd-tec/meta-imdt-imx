@@ -70,10 +70,10 @@ IMAGE_INSTALL += " \
 
 IMAGE_INSTALL_append = " \
     linux-firmware-ap1302 \
-    imdt-camera-demo \
-    imdt-ml-demo \
+    imdt-pico-demos \
     v4l-utils \
     imagemagick \
+    iperf3 \
 "
 
 IMAGE_INSTALL_append_imx8mp-imdt-picoevk = " \

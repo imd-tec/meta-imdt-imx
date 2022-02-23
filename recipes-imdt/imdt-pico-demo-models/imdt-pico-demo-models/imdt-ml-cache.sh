@@ -1,0 +1,9 @@
+#!/bin/sh
+
+CACHE_DIR=/opt/imdt/ml-cache
+
+mkdir -p $CACHE_DIR
+
+export VIV_VX_ENABLE_CACHE_GRAPH_BINARY="1"
+export VIV_VX_CACHE_BINARY_GRAPH_DIR=$CACHE_DIR
+export VIV_VX_CACHE_BINARY_GRAPH_MAX_COUNT=10

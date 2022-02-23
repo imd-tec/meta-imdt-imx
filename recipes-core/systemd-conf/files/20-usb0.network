@@ -1,0 +1,12 @@
+[Match]
+Name=usb0
+
+[Network]
+Address=172.16.10.100/24
+DHCPServer=true
+IPMasquerade=ipv4
+
+[DHCPServer]
+PoolOffset=200
+PoolSize=32
+EmitDNS=no
