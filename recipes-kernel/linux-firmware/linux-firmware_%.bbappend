@@ -3,8 +3,8 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRC_URI_append_imx8mp-imdt-picoevk = "file://ap1302_ar1335_single_fw.bin"
-SRC_URI_append_imx8mp-imdt-uevk = "file://ap1302_ar1335_single_fw.bin"
-SRC_URI_append_imx8mp-imdt-uevk-2g = "file://ap1302_ar1335_single_fw.bin"
+SRC_URI_append_imx8mp-imdt-uevk = "file://ap1302_ar1335_single_fw.bin.uevk"
+SRC_URI_append_imx8mp-imdt-uevk-2g = "file://ap1302_ar1335_single_fw.bin.uevk"
 
 do_install_append_imx8mp-imdt-picoevk() {
 
@@ -18,13 +18,13 @@ do_install_append_imx8mp-imdt-picoevk() {
 do_install_append_imx8mp-imdt-uevk() {
 
     # AP1302 ISP firmware
-    install -m 0644 ${WORKDIR}/ap1302_ar1335_single_fw.bin ${D}/lib/firmware/ap1302_ar1335_single_fw.bin
+    install -m 0644 ${WORKDIR}/ap1302_ar1335_single_fw.bin.uevk ${D}/lib/firmware/ap1302_ar1335_single_fw.bin
 }
 
 do_install_append_imx8mp-imdt-uevk-2g() {
 
     # AP1302 ISP firmware
-    install -m 0644 ${WORKDIR}/ap1302_ar1335_single_fw.bin ${D}/lib/firmware/ap1302_ar1335_single_fw.bin
+    install -m 0644 ${WORKDIR}/ap1302_ar1335_single_fw.bin.uevk ${D}/lib/firmware/ap1302_ar1335_single_fw.bin
 }
 
 PACKAGES =+ "${PN}-ap1302"
