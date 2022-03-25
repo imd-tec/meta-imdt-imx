@@ -6,7 +6,7 @@ LICENSE = "Proprietary"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/Proprietary;md5=0557f9d92cf58f2ccdd50f62f8ac0b28"
 
 SRC_URI = "git://git@github.com/imd-tec/imdt-pico-demos.git;protocol=ssh;branch=main"
-SRCREV = "a8974d5d80b66f2b9a7640e31d973e8191804f32"
+SRCREV = "0f252c2a322cb59c3a1c3483a32db8b39814c69f"
 PV = "2.1.0"
 
 S = "${WORKDIR}/git"
