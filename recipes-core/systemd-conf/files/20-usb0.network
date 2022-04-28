@@ -10,3 +10,4 @@ IPMasquerade=ipv4
 PoolOffset=200
 PoolSize=32
 EmitDNS=no
+EmitRouter=no
