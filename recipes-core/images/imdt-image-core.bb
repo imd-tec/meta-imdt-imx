@@ -31,6 +31,8 @@ IMAGE_INSTALL_append = " \
     packagegroup-fsl-tools-audio \
     v4l-utils \
     iperf3 \
+    alsa-utils \
+    alsa-tools \
 "
 
 IMAGE_INSTALL_append_imdt-pico = " \
