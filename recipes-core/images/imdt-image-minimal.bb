@@ -1,16 +1,14 @@
-# Copyright (c) 2022 IMD Technologies
+# Copyright (c) 2021 IMD Technologies
 # Copyright 2018-2021 NXP
 # Released under the MIT license (see COPYING.MIT for the terms)
 
-DESCRIPTION = "This is the core image with IMDT's demo applications"
+DESCRIPTION = "This is the basic core image with minimal tests"
 
 inherit core-image
 
 IMAGE_FEATURES += " \
     debug-tweaks \
     package-management \
-    nfs-server \
-    tools-debug \
     ssh-server-dropbear \
     hwcodecs \
 "
@@ -19,18 +17,10 @@ SDKIMAGE_FEATURES_append = " \
 "
 
 IMAGE_INSTALL_append = " \
-    imx-test \
     firmwared \
     packagegroup-imx-core-tools \
     packagegroup-imx-security \
-    curl \
     linux-firmware-ap1302 \
-    imdt-pico-demos \
-    packagegroup-fsl-gstreamer1.0 \
-    packagegroup-fsl-gstreamer1.0-full \
-    packagegroup-fsl-tools-audio \
-    v4l-utils \
-    iperf3 \
 "
 
 IMAGE_INSTALL_append_imdt-pico = " \
@@ -45,4 +35,4 @@ IMAGE_INSTALL_append_imdt-pico = " \
 # Set the default target
 SYSTEMD_DEFAULT_TARGET = "multi-user.target"
 
-export IMAGE_BASENAME = "imdt-image-core"
+export IMAGE_BASENAME = "imdt-image-minimal"

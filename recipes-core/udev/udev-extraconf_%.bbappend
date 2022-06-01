@@ -1,38 +1,29 @@
+#
+# Copyright (c) 2022 IMD Technologies
+#
+
 # picoevk
 
-FILESEXTRAPATHS_append_imx8mp-imdt-picoevk := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS_append_imdt-pico := "${THISDIR}/${PN}:"
 
-SRC_URI_append_imx8mp-imdt-picoevk = " file://ap1302-sensor-picoevk.conf "
+SRC_URI_append_imdt-pico = " file://ap1302-sensor-pico-v2.conf "
 
-do_install_append_imx8mp-imdt-picoevk() {
+do_install_append_imdt-pico() {
     install -d ${D}${sysconfdir}/modprobe.d
-    install -m 0644 ${WORKDIR}/ap1302-sensor-picoevk.conf ${D}${sysconfdir}/modprobe.d
+    install -m 0644 ${WORKDIR}/ap1302-sensor-pico-v2.conf ${D}${sysconfdir}/modprobe.d
 }
 
-FILES_${PN}_append_imx8mp-imdt-picoevk = " ${sysconfdir}/modprobe.d"
+FILES_${PN}_append_imdt-pico = " ${sysconfdir}/modprobe.d"
 
 # uevk
 
-FILESEXTRAPATHS_append_imx8mp-imdt-uevk := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS_append_imdt-uevk := "${THISDIR}/${PN}:"
 
-SRC_URI_append_imx8mp-imdt-uevk = " file://ap1302-sensor-uevk.conf "
+SRC_URI_append_imdt-uevk = " file://ap1302-sensor-uevk.conf "
 
-do_install_append_imx8mp-imdt-uevk() {
+do_install_append_imdt-uevk() {
     install -d ${D}${sysconfdir}/modprobe.d
     install -m 0644 ${WORKDIR}/ap1302-sensor-uevk.conf ${D}${sysconfdir}/modprobe.d
 }
 
-FILES_${PN}_append_imx8mp-imdt-uevk = " ${sysconfdir}/modprobe.d"
-
-# uevk-2g
-
-FILESEXTRAPATHS_append_imx8mp-imdt-uevk-2g := "${THISDIR}/${PN}:"
-
-SRC_URI_append_imx8mp-imdt-uevk-2g = " file://ap1302-sensor-uevk.conf "
-
-do_install_append_imx8mp-imdt-uevk-2g() {
-    install -d ${D}${sysconfdir}/modprobe.d
-    install -m 0644 ${WORKDIR}/ap1302-sensor-uevk.conf ${D}${sysconfdir}/modprobe.d
-}
-
-FILES_${PN}_append_imx8mp-imdt-uevk-2g = " ${sysconfdir}/modprobe.d"
+FILES_${PN}_append_imdt-uevk = " ${sysconfdir}/modprobe.d"

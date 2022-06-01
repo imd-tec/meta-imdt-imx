@@ -5,38 +5,26 @@
 LICENSE = "Proprietary"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/Proprietary;md5=0557f9d92cf58f2ccdd50f62f8ac0b28"
 
-SRC_URI = "git://git@github.com/imd-tec/imdt-pico-demos.git;protocol=ssh;branch=main"
-SRCREV = "f19bf41ceb922d751d43fcbe09ba6cf952555327"
-PV = "2.1.0"
+SRC_URI = "file://imdt-pico-demos-2.2.0+0+55f1b68746-r0.cortexa53_crypto_mx8mp.rpm;subdir=rpm"
+PV = "2.2.0"
 
-S = "${WORKDIR}/git"
+S = "${WORKDIR}/rpm"
 
-inherit cmake pkgconfig systemd
-
-EXTRA_OECMAKE = ""
-
-do_install_append_imx8mp-imdt-picoevk() {
-    install -d ${D}/opt/imdt/pico-demos/sysfs/
-    ln -s /sys/devices/platform/soc@0/30800000.bus/30a50000.i2c/i2c-3/3-003c/face_detection ${D}/opt/imdt/pico-demos/sysfs/face_detection
-}
-
-do_install_append_imx8mp-imdt-uevk() {
-    install -d ${D}/opt/imdt/pico-demos/sysfs/
-    ln -s /sys/devices/platform/soc@0/30800000.bus/30a30000.i2c/i2c-1/1-003c/face_detection ${D}/opt/imdt/pico-demos/sysfs/face_detection
-}
-
-do_install_append_imx8mp-imdt-uevk-2g() {
-    install -d ${D}/opt/imdt/pico-demos/sysfs/
-    ln -s /sys/devices/platform/soc@0/30800000.bus/30a30000.i2c/i2c-1/1-003c/face_detection ${D}/opt/imdt/pico-demos/sysfs/face_detection
-}
-
-DEPENDS = "libpicosupport imdt-pico-demo-models tensorflow-lite flatbuffers opencv xtensor nlohmann-json"
+DEPENDS = "opencv"
 RDEPENDS_${PN} = "libpicosupport imdt-pico-demo-models tensorflow-lite flatbuffers opencv xtensor"
 
-SYSTEMD_AUTO_ENABLE = "enable"
-SYSTEMD_SERVICE_${PN} = "imdt-web-server.service"
+# Copy the contents of the RPM to the root filesystem
+do_install_append() {
+    cp -R ${S}/* ${D}
+}
 
-FILES_${PN}_append = " \
-    /opt/imdt/pico-demos/ \
+# Executables have already have their symbols stripped
+INSANE_SKIP_${PN}_append = "already-stripped"
+
+FILES_${PN} = " \
+    /etc/opt/imdt/pico-demos/ \
     ${systemd_unitdir}/system/ \
+    ${systemd_unitdir}/system-preset/ \
+    /opt/imdt/pico-demos/ \
+    /usr/bin/ \
 "

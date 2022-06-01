@@ -1,3 +1,7 @@
+#
+# Copyright (c) 2022 IMD Technologies
+#
+
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRC_URI_append = " \
@@ -5,7 +9,7 @@ SRC_URI_append = " \
     file://network-gadget-init.service \
 "
 
-SRC_URI_append_imx8mp-imdt-picoevk = " \
+SRC_URI_append_imdt-pico = " \
     file://21-ap.network \
     file://25-wlan.network.disabled \
 "
@@ -16,7 +20,7 @@ FILES_${PN}_append = " \
     ${systemd_system_unitdir}/multi-user.target.wants/network-gadget-init.service \
 "
 
-FILES_${PN}_append_imx8mp-imdt-picoevk = " \
+FILES_${PN}_append_imdt-pico = " \
     ${systemd_unitdir}/network/21-ap.network \
     ${systemd_unitdir}/network/25-wlan.network.disabled \
 "
@@ -32,7 +36,7 @@ do_install_append() {
     ln -s ${systemd_system_unitdir}/network-gadget-init.service ${D}${systemd_system_unitdir}/multi-user.target.wants/network-gadget-init.service
 }
 
-do_install_append_imx8mp-imdt-picoevk() {
+do_install_append_imdt-pico() {
     install -d ${D}${systemd_unitdir}/network
     install -m 0644 ${WORKDIR}/21-ap.network ${D}${systemd_unitdir}/network
 
