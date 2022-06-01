@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2022 IMD Technologies
+#
+
+[Unit]
+Description=Initialise the Bluetooth interface
+After=sysinit.target
+Before=bluetooth.target
+
+[Service]
+Type=forking
+ExecStart=/opt/imdt/bluetooth/start.sh
+
+[Install]
+WantedBy=multi-user.target

@@ -62,13 +62,10 @@ OPENCV_PKGS_imxgpu = " \
     python3-opencv \
 "
 
-IMAGE_INSTALL += " \
+IMAGE_INSTALL_append = " \
     packagegroup-imx-ml \
     tzdata \
     ${OPENCV_PKGS} \
-"
-
-IMAGE_INSTALL_append = " \
     linux-firmware-ap1302 \
     imdt-pico-demos \
     v4l-utils \
@@ -76,12 +73,13 @@ IMAGE_INSTALL_append = " \
     iperf3 \
 "
 
-IMAGE_INSTALL_append_imx8mp-imdt-picoevk = " \
+IMAGE_INSTALL_append_imdt-pico = " \
     wpa-supplicant \
     wireless-tools \
     hostapd \
     dhcpcd \
     wireless-regdb-static \
+    imdt-bt-utils \
 "
 
 TOOLCHAIN_TARGET_TASK_append += " tensorflow-lite-dev armnn-dev onnxruntime-dev"

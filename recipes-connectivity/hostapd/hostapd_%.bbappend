@@ -1,13 +1,17 @@
+#
+# Copyright (c) 2022 IMD Technologies
+#
+
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
-SRC_URI_append_imx8mp-imdt-picoevk = " \
+SRC_URI_append_imdt-pico = " \
    file://hostapd.conf \
    file://hostapd.service \
 "
 
 SYSTEMD_AUTO_ENABLE_${PN} = "enable"
 
-do_install_append_imx8mp-imdt-picoevk () {
+do_install_append_imdt-pico() {
    install -d ${D}${sysconfdir}
    install -m 600 ${WORKDIR}/hostapd.conf ${D}${sysconfdir}
 
