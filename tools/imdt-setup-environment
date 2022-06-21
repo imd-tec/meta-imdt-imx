@@ -47,13 +47,14 @@ else
     hook_in_layer meta-nxp-demo-experience
 
     echo "" >> ./conf/bblayers.conf
-    echo "BBLAYERS += \"\${BSPDIR}/sources/meta-browser/meta-chromium\"" >> $BUILD_DIR/conf/bblayers.conf
+    echo "BBLAYERS += \"\${BSPDIR}/sources/meta-browser/meta-chromium\"" >> ./conf/bblayers.conf
     echo "BBLAYERS += \"\${BSPDIR}/sources/meta-clang\"" >> ./conf/bblayers.conf
     echo "BBLAYERS += \"\${BSPDIR}/sources/meta-openembedded/meta-gnome\"" >> ./conf/bblayers.conf
     echo "BBLAYERS += \"\${BSPDIR}/sources/meta-openembedded/meta-networking\"" >> ./conf/bblayers.conf
     echo "BBLAYERS += \"\${BSPDIR}/sources/meta-openembedded/meta-filesystems\"" >> ./conf/bblayers.conf
     echo "BBLAYERS += \"\${BSPDIR}/sources/meta-qt5\"" >> ./conf/bblayers.conf
     echo "BBLAYERS += \"\${BSPDIR}/sources/meta-python2\"" >> ./conf/bblayers.conf
+    echo "BBLAYERS += \"\${BSPDIR}/sources/meta-swupdate\"" >> ./conf/bblayers.conf
 
     echo "" >> ./conf/bblayers.conf
     echo "BBLAYERS += \"\${BSPDIR}/sources/meta-imdt-imx\"" >> ./conf/bblayers.conf

@@ -1,0 +1,51 @@
+software =
+{
+    version = "1.1.0";
+
+    pico =
+    {
+        hardware-compatibility: [ "2.0" ];
+
+        files:
+        (
+            {
+                filename = "Image";
+                device = "/dev/update-boot";
+                path = "Image";
+                filesystem = "vfat";
+            },
+            {
+                filename = "imx8mp-imdt-pico-v2.dtb";
+                device = "/dev/update-boot";
+                path = "imx8mp-imdt-pico-v2.dtb";
+                filesystem = "vfat";
+            },
+            {
+                filename = "tee.bin";
+                device = "/dev/update-boot";
+                path = "tee.bin";
+                filesystem = "vfat";
+            }
+        );
+
+        images:
+        (
+            {
+                filename = "imdt-image-minimal-imx8mp-imdt-pico-v2.tar.gz";
+                type = "archive";
+                compressed = true;
+                device = "/dev/update-root";
+                filesystem = "ext4";
+                path = "/";
+            }
+        );
+
+        scripts:
+        (
+            {
+                filename = "update.sh";
+                type = "shellscript";
+            }
+        );
+    };
+};

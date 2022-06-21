@@ -71,6 +71,10 @@ IMAGE_INSTALL_append = " \
     v4l-utils \
     imagemagick \
     iperf3 \
+    swupdate \
+    swupdate-progress \
+    swupdate-www \
+    u-boot-fw-utils \
 "
 
 IMAGE_INSTALL_append_imdt-pico = " \
@@ -83,3 +87,6 @@ IMAGE_INSTALL_append_imdt-pico = " \
 "
 
 TOOLCHAIN_TARGET_TASK_append += " tensorflow-lite-dev armnn-dev onnxruntime-dev"
+
+# Set the default target
+SYSTEMD_DEFAULT_TARGET = "multi-user.target"

@@ -21,6 +21,10 @@ IMAGE_INSTALL_append = " \
     packagegroup-imx-core-tools \
     packagegroup-imx-security \
     linux-firmware-ap1302 \
+    swupdate \
+    swupdate-progress \
+    swupdate-www \
+    u-boot-fw-utils \
 "
 
 IMAGE_INSTALL_append_imdt-pico = " \
