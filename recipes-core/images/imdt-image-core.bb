@@ -33,6 +33,10 @@ IMAGE_INSTALL_append = " \
     iperf3 \
     alsa-utils \
     alsa-tools \
+    swupdate \
+    swupdate-progress \
+    swupdate-www \
+    u-boot-fw-utils \
 "
 
 IMAGE_INSTALL_append_imdt-pico = " \

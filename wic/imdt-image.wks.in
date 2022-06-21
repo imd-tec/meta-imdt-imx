@@ -1,0 +1,23 @@
+# short-description: Create an eMMC image with duplicate boot and rootfs partitions
+# long-description:
+# Create an image that can be written onto a SD card using dd for use
+# with i.MX SoC family
+# It uses u-boot + other binaries gathered together on imx-boot file
+#
+# The disk layout used is:
+#  - ---------- -------------- -------------- -------------- -------------- --------------
+# | | imx-boot |    boot0     |    root0     |    boot1     |    root1     |     data     |
+#  - ---------- -------------- -------------- -------------- -------------- --------------
+# ^ ^          ^              ^              ^              ^              ^              ^
+# | |          |              |              |              |              |              |
+# 0 |        8MiB          72MiB          72MiB + rootfs
+#   ${IMX_BOOT_SEEK} 32 or 33kiB, see reference manual
+#
+part u-boot --source rawcopy --sourceparams="file=imx-boot" --ondisk mmcblk --no-table --align ${IMX_BOOT_SEEK}
+part /boot --source bootimg-partition --ondisk mmcblk --fstype=vfat --label boot0 --active --align 8192 --size 64
+part / --source rootfs --ondisk mmcblk --fstype=ext4 --label root0 --align 8192
+part /boot --source bootimg-partition --ondisk mmcblk --fstype=vfat --label boot1 --align 8192 --size 64
+part / --source rootfs --ondisk mmcblk --fstype=ext4 --label root1 --align 8192
+# part --size 2G --ondisk mmcblk --fstype=ext4 --label data --align 8192
+
+bootloader --ptable gpt
