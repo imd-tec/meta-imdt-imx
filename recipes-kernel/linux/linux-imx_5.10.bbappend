@@ -4,7 +4,7 @@
 
 SUMMARY = "Linux kernel provided and supported by IMD Technologies"
 
-SRC_URI = "git://git@github.com/imd-tec/linux-imdt.git;protocol=ssh;branch=imdt-5.10.72"
+SRC_URI = "git://github.com/imd-tec/linux-imdt.git;protocol=https;branch=imdt-5.10.72"
 SRCREV = "e2fe60d165aa37f14b3a199e325a51c72fa56824"
 
 KERNEL_DEFCONFIG = "imx_v8_defconfig"
