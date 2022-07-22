@@ -59,9 +59,9 @@ else
     echo "" >> ./conf/bblayers.conf
     echo "BBLAYERS += \"\${BSPDIR}/sources/meta-imdt-imx\"" >> ./conf/bblayers.conf
 
-    if [ -d ../sources/meta-imdt-imx-dev ]; then
+    if [ -d ../sources/meta-imdt-imx-internal ]; then
         echo "" >> ./conf/bblayers.conf
-        echo "BBLAYERS += \"\${BSPDIR}/sources/meta-imdt-imx-dev\"" >> ./conf/bblayers.conf
+        echo "BBLAYERS += \"\${BSPDIR}/sources/meta-imdt-imx-internal\"" >> ./conf/bblayers.conf
     fi
 
 fi

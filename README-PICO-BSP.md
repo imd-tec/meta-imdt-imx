@@ -1,4 +1,4 @@
-# PicoEVK Board Support Package
+# IMDT Pico Board Support Package
 
 ## Quick Start
 
