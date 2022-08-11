@@ -10,11 +10,17 @@ SRC_URI += " \
 "
 
 do_install_append_imdt-pico-v2() {
-    echo "/dev/mmcblk1 0x400000 0x4000" > ${D}/${sysconfdir}/fw_env.config
     echo "pico 2.0" > ${D}/${sysconfdir}/hwrevision
 }
 
+do_install_append_imdt-pico-v3() {
+    echo "pico 3.0" > ${D}/${sysconfdir}/hwrevision
+}
+
 FILES_${PN}_append_imdt-pico-v2 = " \
-    ${sysconfdir}/fw_env.config \
+    ${sysconfdir}/hwrevision \
+"
+
+FILES_${PN}_append_imdt-pico-v3 = " \
     ${sysconfdir}/hwrevision \
 "

@@ -84,6 +84,10 @@ IMAGE_INSTALL_append_imdt-pico = " \
     dhcpcd \
     wireless-regdb-static \
     imdt-bt-utils \
+    lmsensors \
+    libiio \
+    libiio-python3 \
+    kernel-iio-tools \
 "
 
 TOOLCHAIN_TARGET_TASK_append += " tensorflow-lite-dev armnn-dev onnxruntime-dev"

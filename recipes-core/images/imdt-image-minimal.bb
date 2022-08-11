@@ -34,6 +34,7 @@ IMAGE_INSTALL_append_imdt-pico = " \
     dhcpcd \
     wireless-regdb-static \
     imdt-bt-utils \
+    lmsensors \
 "
 
 # Set the default target

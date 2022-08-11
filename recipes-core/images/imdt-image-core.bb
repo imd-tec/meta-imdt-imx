@@ -46,6 +46,10 @@ IMAGE_INSTALL_append_imdt-pico = " \
     dhcpcd \
     wireless-regdb-static \
     imdt-bt-utils \
+    lmsensors \
+    libiio \
+    libiio-python3 \
+    kernel-iio-tools \
 "
 
 # Set the default target
