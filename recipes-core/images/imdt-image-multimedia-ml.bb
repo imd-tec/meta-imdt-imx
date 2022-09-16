@@ -63,6 +63,7 @@ OPENCV_PKGS_imxgpu = " \
 "
 
 IMAGE_INSTALL_append = " \
+    libgpiod-tools \
     packagegroup-imx-ml \
     tzdata \
     ${OPENCV_PKGS} \

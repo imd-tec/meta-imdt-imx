@@ -17,6 +17,8 @@ SDKIMAGE_FEATURES_append = " \
 "
 
 IMAGE_INSTALL_append = " \
+    libgpiod-tools \
+    imx-test \
     firmwared \
     packagegroup-imx-core-tools \
     packagegroup-imx-security \
