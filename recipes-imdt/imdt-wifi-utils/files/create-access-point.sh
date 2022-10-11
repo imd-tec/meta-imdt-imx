@@ -65,7 +65,7 @@ then
 
     TMP_FILE=`mktemp`
 
-    wpa_passphrase $SSID $PASSPHRASE > $TMP_FILE
+    wpa_passphrase "$SSID" "$PASSPHRASE" > $TMP_FILE
 
     if [ $? == 0 ]
     then

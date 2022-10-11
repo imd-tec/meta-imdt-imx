@@ -47,6 +47,7 @@ IMAGE_INSTALL_append_imdt-pico = " \
     dhcpcd \
     wireless-regdb-static \
     imdt-bt-utils \
+    imdt-wifi-utils \
     lmsensors \
     libiio \
     libiio-python3 \

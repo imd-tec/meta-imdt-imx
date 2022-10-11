@@ -60,7 +60,7 @@ then
     echo "update_config=1" >> $TMP_FILE
     echo "" >> $TMP_FILE
 
-    wpa_passphrase $1 $2 >> $TMP_FILE
+    wpa_passphrase "$SSID" "$PASSPHRASE" >> $TMP_FILE
 
     if [ $? == 0 ]
     then
