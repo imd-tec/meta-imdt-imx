@@ -10,6 +10,7 @@ SRCREV = "ae3245a940311a8a64a51e7e99aa0a8b5b8e0526"
 KERNEL_DEFCONFIG = "imx_v8_defconfig"
 KERNEL_DEFCONFIG_imx8mp-imdt-pico-v2 = "imdt_pico_v2_defconfig"
 KERNEL_DEFCONFIG_imx8mp-imdt-pico-v3 = "imdt_pico_v3_defconfig"
+KERNEL_DEFCONFIG_imx8mp-imdt-pico-v3-0004 = "imdt_pico_v3_0004_defconfig"
 KERNEL_DEFCONFIG_imx8mp-imdt-uevk = "imdt_uevk_defconfig"
 
 do_copy_defconfig() {
