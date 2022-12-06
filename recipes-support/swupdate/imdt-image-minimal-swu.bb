@@ -17,6 +17,11 @@ SRC_URI_imdt-pico-v3 = " \
     file://update.sh \
 "
 
+SRC_URI_imdt-pico-v3-0004 = " \
+    file://sw-description \
+    file://update.sh \
+"
+
 # Dependencies to build before creating the SWUpdate image
 IMAGE_DEPENDS = "imdt-image-minimal"
 
@@ -35,6 +40,14 @@ SWUPDATE_IMAGES_imdt-pico-v3 = " \
     imdt-image-minimal-imx8mp-imdt-pico-v3 \
 "
 
+SWUPDATE_IMAGES_imdt-pico-v3-0004 = " \
+    Image \
+    imx8mp-imdt-pico-v3-0004.dtb \
+    tee.bin \
+    imdt-image-minimal-imx8mp-imdt-pico-v3-0004 \
+"
+
 # SWUpdate requires that the root filesystem be compressed using GZip
 SWUPDATE_IMAGES_FSTYPES[imdt-image-minimal-imx8mp-imdt-pico-v2] = ".tar.gz"
 SWUPDATE_IMAGES_FSTYPES[imdt-image-minimal-imx8mp-imdt-pico-v3] = ".tar.gz"
+SWUPDATE_IMAGES_FSTYPES[imdt-image-minimal-imx8mp-imdt-pico-v3-0004] = ".tar.gz"

@@ -17,10 +17,18 @@ do_install_append_imdt-pico-v3() {
     echo "pico 3.0" > ${D}/${sysconfdir}/hwrevision
 }
 
+do_install_append_imdt-pico-v3-0004() {
+    echo "pico 3.0-0004" > ${D}/${sysconfdir}/hwrevision
+}
+
 FILES_${PN}_append_imdt-pico-v2 = " \
     ${sysconfdir}/hwrevision \
 "
 
 FILES_${PN}_append_imdt-pico-v3 = " \
+    ${sysconfdir}/hwrevision \
+"
+
+FILES_${PN}_append_imdt-pico-v3-0004 = " \
     ${sysconfdir}/hwrevision \
 "
