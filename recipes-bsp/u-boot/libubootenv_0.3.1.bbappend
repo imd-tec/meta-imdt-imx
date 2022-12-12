@@ -2,13 +2,28 @@
 # Copyright (c) 2022 IMD Technologies
 #
 
-do_install_append () {
-    install -d ${D}/${sysconfdir}
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
-    # TODO - change this if booting from eMMC
-    echo "/dev/mmcblk1 0x400000 0x4000" > ${D}/${sysconfdir}/fw_env.config
+SRC_URI += " \
+    file://imdt-libubootenv-config.service \
+    file://generate-fwenv-config.sh \
+"
+
+inherit systemd
+
+do_install_append () {
+    install -d ${D}${systemd_system_unitdir}
+    install -m 0644 ${WORKDIR}/imdt-libubootenv-config.service ${D}${systemd_system_unitdir}
+
+    install -d ${D}/opt/imdt/libubootenv
+    install -m 0744 ${WORKDIR}/generate-fwenv-config.sh ${D}/opt/imdt/libubootenv
 }
 
-FILES_${PN}_append = " \
-    ${sysconfdir}/fw_env.config \
+RDEPENDS_${PN}_append = " bash"
+
+SYSTEMD_AUTO_ENABLE = "enable"
+SYSTEMD_SERVICE_${PN} = "imdt-libubootenv-config.service"
+
+FILES_${PN} += " \
+    /opt/imdt/libubootenv/generate-fwenv-config.sh \
 "
