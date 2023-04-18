@@ -1,7 +1,7 @@
 require conf/distro/poky.conf
 
 DISTRO_NAME = "IMDT Pico BSP"
-DISTRO_VERSION = "1.5.0"
+DISTRO_VERSION = "1.5.1"
 
 MAINTAINER = "IMDT <pault@imd-tec.com>"
 

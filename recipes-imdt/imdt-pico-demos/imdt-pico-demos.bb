@@ -5,8 +5,8 @@
 LICENSE = "Proprietary"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/Proprietary;md5=0557f9d92cf58f2ccdd50f62f8ac0b28"
 
-SRC_URI = "file://imdt-pico-demos-3.1.0+0+e36f7936f2-r0.cortexa53_crypto_mx8mp.rpm;subdir=rpm"
-PV = "3.1.0"
+SRC_URI = "file://imdt-pico-demos-3.1.1+0+07e73d8e9c-r0.cortexa53_crypto_mx8mp.rpm;subdir=rpm"
+PV = "3.1.1"
 
 S = "${WORKDIR}/rpm"
 
