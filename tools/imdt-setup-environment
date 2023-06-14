@@ -64,4 +64,9 @@ else
         echo "BBLAYERS += \"\${BSPDIR}/sources/meta-imdt-imx-internal\"" >> ./conf/bblayers.conf
     fi
 
+    # add murata layer in for pico-e only
+    if [ "${MACHINE}" = "imx8mp-imdt-pico-e" ]; then
+        echo "BBLAYERS += \"\${BSPDIR}/sources/meta-murata-wireless\"" >> ./conf/bblayers.conf
+    fi
+
 fi

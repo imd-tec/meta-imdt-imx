@@ -1,0 +1,21 @@
+diff --git a/murata/files/wifi_mod_para_murata.conf b/murata/files/wifi_mod_para_murata.conf
+index ac98f82..1be241b 100644
+--- a/murata/files/wifi_mod_para_murata.conf
++++ b/murata/files/wifi_mod_para_murata.conf
+@@ -153,14 +153,14 @@ SD9098_1 = {
+ 
+ SD8978 = {
+ 	cfg80211_wext=0xf
+-	wfd_name=p2p
+ 	max_vir_bss=1
++	sta_name=wlan
+ 	cal_data_cfg=none
+ 	drv_mode=7
+ 	ps_mode=2
+ 	auto_ds=2
+ 	fw_name=nxp/sdiouartiw416_combo_v0.bin
+-	txpwrlimit_cfg=nxp/txpower_US.bin
++	txpwrlimit_cfg=nxp/murata/files/1XK/txpower_US.bin
+ }
+ 
+ SD8801 = {

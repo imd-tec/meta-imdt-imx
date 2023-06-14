@@ -15,6 +15,9 @@ SRC_URI_append_imdt-uevk = " \
 
 do_install_append_imdt-pico() {
 
+    # uninstall previous wifi conf
+    rm -f ${D}${nonarch_base_libdir}/firmware/nxp/wifi_mod_para.conf
+
     # AP1302 ISP firmware
     install -m 0644 ${WORKDIR}/ap1302_ar1335_single_fw.bin ${D}/lib/firmware/ap1302_ar1335_single_fw.bin
 
