@@ -6,3 +6,6 @@ SRC_URI_append_imdt-pico = " \
 do_install_append_imdt-pico-e () {
         install -m 644 ${WORKDIR}/nxp-linux-calibration/murata/files/wifi_mod_para_murata.conf ${D}/lib/firmware/nxp/wifi_mod_para.conf
 }
+
+COMPATIBLE_MACHINE = "(imx8mp-imdt-pico-e)"
+
