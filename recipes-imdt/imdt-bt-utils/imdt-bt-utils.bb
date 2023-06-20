@@ -10,6 +10,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 SRC_URI = " \
     file://imdt-bluetooth-init.service \
     file://start.sh \
+    file://start_bt_1xk.sh \
 "
 
 inherit systemd
@@ -20,6 +21,12 @@ do_install() {
 
     install -d ${D}/opt/imdt/bluetooth
     install -m 0744 ${WORKDIR}/start.sh ${D}/opt/imdt/bluetooth
+}
+
+
+do_install_append_imdt-pico-e() {
+    install -d ${D}/opt/imdt/bluetooth
+    install -m 0744 ${WORKDIR}/start_bt_1xk.sh ${D}/opt/imdt/bluetooth/start.sh
 }
 
 SYSTEMD_AUTO_ENABLE = "disable"
