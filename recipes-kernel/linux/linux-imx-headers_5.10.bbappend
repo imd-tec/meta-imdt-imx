@@ -3,4 +3,4 @@
 #
 
 SRC_URI = "git://github.com/imd-tec/linux-imdt.git;protocol=https;branch=imdt-5.10.72"
-SRCREV = "0ec672331e15190de2bb29a7f1e38f9709528d23"
+SRCREV = "c5f84998d77151e891227efb96b998a326e8f797"

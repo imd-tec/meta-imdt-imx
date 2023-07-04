@@ -5,7 +5,7 @@
 SUMMARY = "Linux kernel provided and supported by IMD Technologies"
 
 SRC_URI = "git://github.com/imd-tec/linux-imdt.git;protocol=https;branch=imdt-5.10.72"
-SRCREV = "0ec672331e15190de2bb29a7f1e38f9709528d23"
+SRCREV = "c5f84998d77151e891227efb96b998a326e8f797"
 
 KERNEL_DEFCONFIG = "imx_v8_defconfig"
 KERNEL_DEFCONFIG_imx8mp-imdt-pico-e = "imdt_pico_e_defconfig"
