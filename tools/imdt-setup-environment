@@ -33,6 +33,15 @@ else
         display_usage
     fi
 
+    # export IS_PICO_E to use after the sourcing of setup-environment
+    if [ "${MACHINE}" = "imx8mp-imdt-pico-e" ]; then
+        export IS_PICO_E=1
+    else
+        export IS_PICO_E=0
+    fi
+
+    # After the sourcing of setup-environment, shell variables will be removed. 
+    # Only exported variables will still be valid.
     . ./setup-environment $BUILD_DIR
 
     if [ -f ./conf/bblayers.conf ]; then
@@ -65,7 +74,7 @@ else
     fi
 
     # add murata layer in for pico-e only
-    if [ "${MACHINE}" = "imx8mp-imdt-pico-e" ]; then
+    if [ $IS_PICO_E -eq 1 ]; then
         echo "BBLAYERS += \"\${BSPDIR}/sources/meta-murata-wireless\"" >> ./conf/bblayers.conf
     fi
 
