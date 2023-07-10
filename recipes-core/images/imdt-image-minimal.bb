@@ -39,6 +39,7 @@ IMAGE_INSTALL_append_imdt-pico = " \
     imdt-wifi-utils \
     lmsensors \
     ${@bb.utils.contains('MACHINE_FEATURES', 'nxp8997', 'openobex murata-binaries obexftp glibc-gconv-utf-16 glibc-utils', '', d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-pci', 'pciutils', '', d)} \
 "
 
 # Set the default target
