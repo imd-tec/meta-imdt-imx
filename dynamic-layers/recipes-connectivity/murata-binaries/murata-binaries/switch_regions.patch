@@ -1,0 +1,279 @@
+diff --git a/murata/switch_regions.sh b/murata/switch_regions.sh
+index 77f050d..e6657e3 100755
+--- a/murata/switch_regions.sh
++++ b/murata/switch_regions.sh
+@@ -3,12 +3,32 @@
+ # Switching Tx power binary, edmac, bluetooth power, and regulatory.bin files based on module selection"
+ 
+ VERSION="1.0"
+-MODULE=1ZM
++MODULE=1XK
+ TYPE=`getconf LONG_BIT`
+-COUNTRY=US
++#COUNTRY=EU
+ 
+-function load_files() {
+-  # check for the existence of folder, "crda"
++function set_iw_reg()
++{
++  line=$(sed -n '163p' /lib/firmware/nxp/wifi_mod_para.conf)
++  COUNTRY=${line#*=}
++  COUNTRY=${COUNTRY#*/txpower_}
++  COUNTRY=${COUNTRY%.bin}
++
++  if [ "$COUNTRY" = "EU" ]; then
++    COUNTRY="DE"
++  fi
++  
++  echo "${COUNTRY}"
++  iw reg set ${COUNTRY}
++  echo "Setup complete."
++  echo ""
++  iw reg get
++  echo ""
++}
++
++function run_boot()
++{
++    # check for the existence of folder, "crda"
+   if [ ! -d "/usr/lib/crda" ]
+   then
+     echo "Directory /usr/lib/crda does not exist."
+@@ -30,107 +50,9 @@ function load_files() {
+   if [ ! -f /lib/firmware/nxp/bt_power_config_1.sh ]; then
+     cp /lib/firmware/nxp/murata/files/bt_power_config_1.sh /lib/firmware/nxp
+   fi
+-
+-  iw reg set ${COUNTRY}
+-  echo "Setup complete."
+-  echo ""
+-  iw reg get
+-  echo ""
+-}
+-
+-function update_conf_file_1zm() {
+-  # Update the wifi_mod_para.conf file based on ${MODULE} and ${COUNTRY}. Keep a backup.
+-  if [ ! -f /lib/firmware/nxp/wifi_mod_para.conf.orig ]; then
+-    if [ -f /lib/firmware/nxp/wifi_mod_para.conf ]; then
+-      cp /lib/firmware/nxp/wifi_mod_para.conf /lib/firmware/nxp/wifi_mod_para.conf.orig
+-    fi
+-  fi
+-
+-  cp /lib/firmware/nxp/murata/files/wifi_mod_para_murata.conf /lib/firmware/nxp/wifi_mod_para.conf
+-
+-  case ${COUNTRY} in
+-    US)
+-      ;;
+-    EU)
+-      sed -i '83s/txpower_US/txpower_EU/' /lib/firmware/nxp/wifi_mod_para.conf
+-      sed -i '84 i muratainit_hostcmd_cfg=nxp/ed_mac.bin' /lib/firmware/nxp/wifi_mod_para.conf
+-      ;;
+-    JP)
+-      sed -i '83s/txpower_US/txpower_JP/' /lib/firmware/nxp/wifi_mod_para.conf
+-      ;;
+-    CA)
+-      sed -i '83s/txpower_US/txpower_CA/' /lib/firmware/nxp/wifi_mod_para.conf
+-      ;;
+-    *)
+-      ;;
+-  esac
+-  sed -i 's/murata/	/g' /lib/firmware/nxp/wifi_mod_para.conf
+-}
+-
+-function update_conf_file_1ym() {
+-  # Update the wifi_mod_para.conf file based on ${MODULE} and ${COUNTRY}. Keep a backup.
+-  if [ ! -f /lib/firmware/nxp/wifi_mod_para.conf.orig ]; then
+-    if [ -f /lib/firmware/nxp/wifi_mod_para.conf ]; then
+-      cp /lib/firmware/nxp/wifi_mod_para.conf /lib/firmware/nxp/wifi_mod_para.conf.orig
+-    fi
+-  fi
+-
+-  cp /lib/firmware/nxp/murata/files/wifi_mod_para_murata.conf /lib/firmware/nxp/wifi_mod_para.conf
+-
+-  case ${COUNTRY} in
+-    US)
+-      ;;
+-    EU)
+-      sed -i '39s/txpower_US/txpower_EU/' /lib/firmware/nxp/wifi_mod_para.conf
+-      sed -i '103s/txpower_US/txpower_EU/' /lib/firmware/nxp/wifi_mod_para.conf
+-      sed -i '40 i muratainit_hostcmd_cfg=nxp/ed_mac.bin' /lib/firmware/nxp/wifi_mod_para.conf
+-      sed -i '105 i muratainit_hostcmd_cfg=nxp/ed_mac.bin' /lib/firmware/nxp/wifi_mod_para.conf
+-      ;;
+-    JP)
+-      sed -i '39s/txpower_US/txpower_JP/' /lib/firmware/nxp/wifi_mod_para.conf
+-      sed -i '103s/txpower_US/txpower_JP/' /lib/firmware/nxp/wifi_mod_para.conf
+-      ;;
+-    CA)
+-      sed -i '39s/txpower_US/txpower_CA/' /lib/firmware/nxp/wifi_mod_para.conf
+-      sed -i '103s/txpower_US/txpower_CA/' /lib/firmware/nxp/wifi_mod_para.conf
+-      ;;
+-    *)
+-      ;;
+-  esac
+-  sed -i 's/murata/	/g' /lib/firmware/nxp/wifi_mod_para.conf
+-}
+-
+-function update_conf_file_1xk() {
+-  # Update the wifi_mod_para.conf file based on ${MODULE} and ${COUNTRY}. Keep a backup.
+-  if [ ! -f /lib/firmware/nxp/wifi_mod_para.conf.orig ]; then
+-    if [ -f /lib/firmware/nxp/wifi_mod_para.conf ]; then
+-      cp /lib/firmware/nxp/wifi_mod_para.conf /lib/firmware/nxp/wifi_mod_para.conf.orig
+-    fi
+-  fi
+-
+-  cp /lib/firmware/nxp/murata/files/wifi_mod_para_murata.conf /lib/firmware/nxp/wifi_mod_para.conf
+-
+-  case ${COUNTRY} in
+-    US)
+-      ;;
+-    EU)
+-      sed -i '163s/txpower_US/txpower_EU/' /lib/firmware/nxp/wifi_mod_para.conf
+-      sed -i '164 i muratainit_hostcmd_cfg=nxp/ed_mac.bin' /lib/firmware/nxp/wifi_mod_para.conf
+-      ;;
+-    JP)
+-      sed -i '163s/txpower_US/txpower_JP/' /lib/firmware/nxp/wifi_mod_para.conf
+-      ;;
+-    CA)
+-      sed -i '163s/txpower_US/txpower_CA/' /lib/firmware/nxp/wifi_mod_para.conf
+-      ;;
+-    *)
+-      ;;
+-  esac
+-
+-  sed -i 's/murata/	/g' /lib/firmware/nxp/wifi_mod_para.conf
+ }
+ 
+-function update_conf_file_2ds() {
++function modify_conf() {
+   # Update the wifi_mod_para.conf file based on ${MODULE} and ${COUNTRY}. Keep a backup.
+   if [ ! -f /lib/firmware/nxp/wifi_mod_para.conf.orig ]; then
+     if [ -f /lib/firmware/nxp/wifi_mod_para.conf ]; then
+@@ -139,72 +61,37 @@ function update_conf_file_2ds() {
+   fi
+ 
+   cp /lib/firmware/nxp/murata/files/wifi_mod_para_murata.conf /lib/firmware/nxp/wifi_mod_para.conf
++  sed -i '164 {/^\tinit_hostcmd_cfg=nxp\/ed_mac.bin$/d}' /lib/firmware/nxp/wifi_mod_para.conf
+ 
+   case ${COUNTRY} in
+     US)
++      sed -i '163s/txpower_[A-Za-z][A-Za-z]/txpower_US/' /lib/firmware/nxp/wifi_mod_para.conf
+       ;;
+-    EU)
+-      sed -i '173s/txpower_US/txpower_EU/' /lib/firmware/nxp/wifi_mod_para.conf
++    DE)
++      sed -i '163s/txpower_[A-Za-z][A-Za-z]/txpower_EU/' /lib/firmware/nxp/wifi_mod_para.conf
++      sed -i '164s/.*/\tinit_hostcmd_cfg=nxp\/ed_mac.bin\n&/' /lib/firmware/nxp/wifi_mod_para.conf
+       ;;
+     JP)
+-      sed -i '173s/txpower_US/txpower_JP/' /lib/firmware/nxp/wifi_mod_para.conf
++      sed -i '163s/txpower_[A-Za-z][A-Za-z]/txpower_JP/' /lib/firmware/nxp/wifi_mod_para.conf
+       ;;
+     CA)
+-      sed -i '173s/txpower_US/txpower_CA/' /lib/firmware/nxp/wifi_mod_para.conf
++      sed -i '163s/txpower_[A-Za-z][A-Za-z]/txpower_CA/' /lib/firmware/nxp/wifi_mod_para.conf
+       ;;
+     *)
+       ;;
+   esac
+ 
+-  sed -i 's/murata/	/g' /lib/firmware/nxp/wifi_mod_para.conf
++  echo "mlan region config changed to ${COUNTRY}."
++  echo "please reboot the device for change to take effect."
+ }
+ 
+-function switch_to_1zm() {
+-  echo ""
+-  echo "Setting up for 1ZM (${TYPE} bit):"
+-  echo "----------------------------"
+-  load_files
+-  update_conf_file_1zm
+-  echo ""
+-}
+-
+-function switch_to_1ym() {
+-  echo ""
+-  echo "Setting up for 1YM (${TYPE} bit):"
+-  echo "----------------------------"
+-  load_files
+-  update_conf_file_1ym
+-  echo ""
+-}
+-
+-function switch_to_1xk() {
+-  echo ""
+-  echo "Setting up for 1XK (${TYPE} bit):"
+-  echo "----------------------------"
+-  load_files
+-  update_conf_file_1xk
+-  echo ""
+-}
+-
+-function switch_to_2ds() {
+-  echo ""
+-  echo "Setting up for 2DS (${TYPE} bit):"
+-  echo "----------------------------"
+-  load_files
+-  update_conf_file_2ds
+-  echo ""
+-}
+ 
+ function usage() {
+   echo ""
+   echo "Version: $VERSION"
+   echo ""
+   echo "Usage:"
+-  echo "  $0  <module> <country code>"
+-  echo ""
+-  echo "Where:"
+-  echo "  <module> is one of :"
+-  echo "     1zm, 1ym, 1xk, 2ds"
++  echo "  $0  <country code>"
+   echo ""
+   echo "  <country code> is one of :"
+   echo "     CA, EU, JP, US"
+@@ -216,12 +103,13 @@ function usage() {
+   echo ""
+ }
+ 
+-if [[ $# -lt 2 ]]; then
+-  usage
+-  exit 1
++if [ $# -eq 0 ]; then
++  run_boot
++  set_iw_reg
++  exit 0
+ fi
+ 
+-case ${2^^} in
++case ${1^^} in
+   US)
+     COUNTRY=US
+     ;;
+@@ -241,26 +129,4 @@ case ${2^^} in
+     ;;
+ esac
+ 
+-case ${1^^} in
+-  ZM|1ZM)
+-    MODULE=1ZM
+-    switch_to_1zm
+-    ;;
+-  XK|1XK)
+-    MODULE=1XK
+-    switch_to_1xk
+-    ;;
+-  2DS)
+-    MODULE=2DS
+-    switch_to_2ds
+-    ;;
+-  YM|1YM)
+-    MODULE=1YM
+-    switch_to_1ym
+-    ;;
+-  *)
+-    #current
+-    usage
+-    exit 1
+-    ;;
+-esac
++modify_conf
