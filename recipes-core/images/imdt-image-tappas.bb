@@ -46,6 +46,7 @@ IMAGE_INSTALL_append = " \
 
 IMAGE_INSTALL_append_imdt-pico = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-pci', 'tappas-apps ', '', d)} \
+    imdt-pico-modem \
 "
 
 

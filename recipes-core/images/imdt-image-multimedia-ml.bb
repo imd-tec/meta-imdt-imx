@@ -94,6 +94,7 @@ IMAGE_INSTALL_append_imdt-pico = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-pci', 'pciutils', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-pci', 'hailo-firmware hailo-pci hailortcli libhailort', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-pci', 'libgsthailo libgsthailotools hailo-post-processes tappas-tracers', '', d)} \
+    imdt-pico-modem \
 "
 
 TOOLCHAIN_TARGET_TASK_append += " tensorflow-lite-dev armnn-dev onnxruntime-dev"
