@@ -14,6 +14,10 @@ SRC_URI_append_imdt-pico = " \
     file://25-wlan.network.disabled \
 "
 
+SRC_URI_append_imdt-pico-e = " \
+    file://19-eth0.network.disabled \
+"
+
 FILES_${PN}_append = " \
     ${systemd_unitdir}/network/20-usb0.network \
     ${systemd_system_unitdir}/network-gadget-init.service \
@@ -23,6 +27,10 @@ FILES_${PN}_append = " \
 FILES_${PN}_append_imdt-pico = " \
     ${systemd_unitdir}/network/21-ap.network \
     ${systemd_unitdir}/network/25-wlan.network.disabled \
+"
+
+FILES_${PN}_append_imdt-pico-e = " \
+    ${systemd_unitdir}/network/19-eth0.network.disabled \
 "
 
 do_install_append() {
@@ -42,4 +50,9 @@ do_install_append_imdt-pico() {
 
     install -d ${D}${systemd_unitdir}/network
     install -m 0644 ${WORKDIR}/25-wlan.network.disabled ${D}${systemd_unitdir}/network
+}
+
+do_install_append_imdt-pico-e() {
+    install -d ${D}${systemd_unitdir}/network
+    install -m 0644 ${WORKDIR}/19-eth0.network.disabled ${D}${systemd_unitdir}/network
 }
