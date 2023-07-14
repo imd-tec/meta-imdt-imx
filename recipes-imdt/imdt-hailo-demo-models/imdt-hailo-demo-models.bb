@@ -7,7 +7,7 @@ LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/Proprietary;md
 
 PV = "1.0.0"
 
-SRC_URI = "git://git@github.com/imd-tec/imdt-hailo-demo-models.git;protocol=ssh;branch=master"
+SRC_URI = "git://git@github.com/imd-tec/imdt-hailo-demo-models.git;protocol=https;branch=master"
 SRCREV = "f1ece21e9b63a996f16dbb3b7aed8c80ca7f0dba"
 
 do_install() {
