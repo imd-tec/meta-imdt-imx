@@ -5,13 +5,13 @@
 LICENSE = "Proprietary"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/Proprietary;md5=0557f9d92cf58f2ccdd50f62f8ac0b28"
 
-SRC_URI = "file://imdt-pico-demos-3.2.0+0+5daadb27aa-r0.cortexa53_crypto_mx8mp.rpm;subdir=rpm"
-PV = "3.2.0"
+SRC_URI = "file://imdt-hailo-demos-4.0.0+0+00dfe2c6e3-r0.cortexa53_crypto_mx8mp.rpm;subdir=rpm"
+PV = "4.0.0"
 
 S = "${WORKDIR}/rpm"
 
 DEPENDS = "opencv"
-RDEPENDS_${PN} = "libpicosupport imdt-pico-demo-models tensorflow-lite flatbuffers opencv xtensor libhttpserver glog"
+RDEPENDS_${PN} = "libpicosupport imdt-hailo-demo-models imdt-pico-demos opencv libhttpserver glog libhailort"
 
 # Copy the contents of the RPM to the root filesystem
 do_install_append() {
