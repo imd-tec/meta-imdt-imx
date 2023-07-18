@@ -2,9 +2,9 @@ software =
 {
     version = "2.1.0";
 
-    pico =
+    pico-e =
     {
-        hardware-compatibility: [ "3.0" ];
+        hardware-compatibility: [ "1.0" ];
 
         files:
         (
