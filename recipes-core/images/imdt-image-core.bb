@@ -58,6 +58,7 @@ IMAGE_INSTALL_append_imdt-pico = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-pci', 'hailo-firmware hailo-pci hailortcli libhailort', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-pci', 'libgsthailo libgsthailotools hailo-post-processes tappas-tracers', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-pci', 'imdt-hailo-demos', '', d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-can', 'libsocketcan can-utils imdt-can-utils', '', d)} \
     imdt-pico-modem \
 "
 

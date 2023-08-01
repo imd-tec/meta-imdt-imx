@@ -40,6 +40,7 @@ IMAGE_INSTALL_append_imdt-pico = " \
     lmsensors \
     ${@bb.utils.contains('MACHINE_FEATURES', 'nxp8997', 'openobex murata-binaries obexftp glibc-gconv-utf-16 glibc-utils', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-ethernet', 'imdt-ethernet-utils', '', d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-can', 'libsocketcan can-utils imdt-can-utils', '', d)} \
 "
 
 # Set the default target
