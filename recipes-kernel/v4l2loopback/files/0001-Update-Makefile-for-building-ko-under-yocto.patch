@@ -1,0 +1,27 @@
+From 3c731189a569c03c8437eab7ddf211641af8ff00 Mon Sep 17 00:00:00 2001
+From: William Bagshaw <110393051+WilliamBagshaw-imd@users.noreply.github.com>
+Date: Tue, 8 Aug 2023 08:37:45 +0100
+Subject: [PATCH] Update Makefile for building ko under yocto.
+
+---
+ Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 385c24d..c859518 100644
+--- a/Makefile
++++ b/Makefile
+@@ -7,8 +7,8 @@ endif
+ include Kbuild
+ ifeq ($(KBUILD_MODULES),)
+ 
+-KERNELRELEASE	?= `uname -r`
+-KERNEL_DIR	?= /lib/modules/$(KERNELRELEASE)/build
++KERNELRELEASE	?= $(KERNEL_VERSION)
++KERNEL_DIR	?= $(KERNEL_SRC)
+ PWD		:= $(shell pwd)
+ 
+ PREFIX ?= /usr/local
+-- 
+2.25.1
+
