@@ -1,4 +1,4 @@
-tate.wm8962audio {
+state.wm8962audio {
 	control.1 {
 		iface MIXER
 		name 'Input Mixer Switch'
