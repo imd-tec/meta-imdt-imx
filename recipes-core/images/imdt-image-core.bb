@@ -60,6 +60,7 @@ IMAGE_INSTALL_append_imdt-pico = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-pci', 'imdt-hailo-demos', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-can', 'libsocketcan can-utils imdt-can-utils', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-rng', 'imdt-rng-test', '', d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-rtc', 'imdt-rtc-utils', '', d)} \
     imdt-pico-modem \
 "
 
