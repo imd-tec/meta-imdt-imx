@@ -8,6 +8,9 @@ SRC_URI += " \
     file://0001-Rebrand-the-SWUpdate-UI.patch \
     file://defconfig \
 "
+do_install_append_imdt-pico-em() {
+    echo "pico-em 1.0" > ${D}/${sysconfdir}/hwrevision
+}
 
 do_install_append_imdt-pico-e() {
     echo "pico-e 1.0" > ${D}/${sysconfdir}/hwrevision
@@ -28,6 +31,10 @@ do_install_append_imdt-pico-v3-0004() {
 do_install_append_imdt-pico-v3-0005() {
     echo "pico 3.0-0005" > ${D}/${sysconfdir}/hwrevision
 }
+
+FILES_${PN}_append_imdt-pico-em = " \
+    ${sysconfdir}/hwrevision \
+"
 
 FILES_${PN}_append_imdt-pico-e = " \
     ${sysconfdir}/hwrevision \

@@ -8,6 +8,7 @@ SRC_URI = "git://github.com/imd-tec/linux-imdt.git;protocol=https;branch=imdt-5.
 SRCREV = "fb6d21d2b2ec640006bef247209db7d63f710a67"
 
 KERNEL_DEFCONFIG = "imx_v8_defconfig"
+KERNEL_DEFCONFIG_imx8mp-imdt-pico-em = "imdt_pico_em_defconfig"
 KERNEL_DEFCONFIG_imx8mp-imdt-pico-e = "imdt_pico_e_defconfig"
 KERNEL_DEFCONFIG_imx8mp-imdt-pico-v2 = "imdt_pico_v2_defconfig"
 KERNEL_DEFCONFIG_imx8mp-imdt-pico-v3 = "imdt_pico_v3_defconfig"
