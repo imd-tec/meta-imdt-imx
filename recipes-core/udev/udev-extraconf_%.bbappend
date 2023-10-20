@@ -9,7 +9,7 @@ FILESEXTRAPATHS_append_imdt-pico := "${THISDIR}/${PN}:"
 SRC_URI_append_imdt-pico = " \
     file://ap1302-sensor-pico-v2.conf \
     file://nxp_depmod.conf \
-    file://nxp_modules.conf \                
+    file://nxp_modules.conf \
 "
 
 do_install_append_imdt-pico() {
