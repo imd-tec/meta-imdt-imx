@@ -5,9 +5,16 @@
 LICENSE = "Proprietary"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/Proprietary;md5=0557f9d92cf58f2ccdd50f62f8ac0b28"
 
-PV = "2.0.0"
+PV = "2.0.1"
 
-SRC_URI = "https://drive.google.com/uc?export=download&id=1WTDOAYvLgzYAfgxquToS1azUjTVcksiY&authuser=0&confirm=t;downloadfilename=${BPN}-${PV}.tar.gz"
+# This old google drive URL now has a virus scanner message on it.
+# https://drive.google.com/uc?export=download&id=1WTDOAYvLgzYAfgxquToS1azUjTVcksiY&authuser=0&confirm=t
+
+# This is obtained by inspection of the virus scan warning dialog.
+# (Will it continue to work?)
+GOOGLE_DRIVE_URL = "https://drive.usercontent.google.com/download?id=1WTDOAYvLgzYAfgxquToS1azUjTVcksiY&export=download&authuser=0&confirm=t&uuid=dcad0ce4-4d91-42d2-b7ec-9bd3cbab0c3a&at=APZUnTX4FnEdVdnC1DSKp0qSGjXS%3A1707403839642"
+
+SRC_URI = "${GOOGLE_DRIVE_URL};downloadfilename=${BPN}-${PV}.tar.gz"
 SRC_URI[sha256sum] = "548ee123cade1c1e00b4d2f95b9faa836e2a4d17c334893e885a79284c52094d"
 
 SRC_URI_append = " \
