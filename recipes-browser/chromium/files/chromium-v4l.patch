@@ -1,0 +1,1321 @@
+diff --git a/components/chromeos_camera/gpu_mjpeg_decode_accelerator_factory.cc b/components/chromeos_camera/gpu_mjpeg_decode_accelerator_factory.cc
+index 6f319e88..4f8f0b7d 100644
+--- a/components/chromeos_camera/gpu_mjpeg_decode_accelerator_factory.cc
++++ b/components/chromeos_camera/gpu_mjpeg_decode_accelerator_factory.cc
+@@ -13,7 +13,8 @@
+ #include "media/base/media_switches.h"
+ #include "media/gpu/buildflags.h"
+ 
+-#if BUILDFLAG(USE_V4L2_CODEC) && defined(ARCH_CPU_ARM_FAMILY)
++#if BUILDFLAG(USE_V4L2_CODEC) && defined(ARCH_CPU_ARM_FAMILY) && \
++    !BUILDFLAG(USE_LINUX_V4L2)
+ #define USE_V4L2_MJPEG_DECODE_ACCELERATOR
+ #endif
+ 
+diff --git a/media/base/supported_types.cc b/media/base/supported_types.cc
+index a50314fe..d0fd5a37 100644
+--- a/media/base/supported_types.cc
++++ b/media/base/supported_types.cc
+@@ -52,7 +52,7 @@ bool IsSupportedHdrMetadata(const gfx::HdrMetadataType& hdr_metadata_type) {
+   return false;
+ }
+ 
+-#if BUILDFLAG(ENABLE_PLATFORM_HEVC) && BUILDFLAG(USE_CHROMEOS_PROTECTED_MEDIA)
++#if BUILDFLAG(ENABLE_PLATFORM_HEVC)
+ bool IsHevcProfileSupported(VideoCodecProfile profile) {
+   if (!base::CommandLine::ForCurrentProcess()->HasSwitch(
+           switches::kEnableClearHevcForTesting)) {
+@@ -339,7 +339,7 @@ bool IsDefaultSupportedVideoType(const VideoType& type) {
+       return true;
+ 
+     case kCodecHEVC:
+-#if BUILDFLAG(ENABLE_PLATFORM_HEVC) && BUILDFLAG(USE_CHROMEOS_PROTECTED_MEDIA)
++#if BUILDFLAG(ENABLE_PLATFORM_HEVC)
+       return IsColorSpaceSupported(type.color_space) &&
+              IsHevcProfileSupported(type.profile);
+ #else
+diff --git a/media/gpu/BUILD.gn b/media/gpu/BUILD.gn
+index 9e5be7d3..b7e5073f 100644
+--- a/media/gpu/BUILD.gn
++++ b/media/gpu/BUILD.gn
+@@ -20,6 +20,7 @@ buildflag_header("buildflags") {
+     "USE_VAAPI_IMAGE_CODECS=$use_vaapi_image_codecs",
+     "USE_V4L2_CODEC=$use_v4l2_codec",
+     "USE_LIBV4L2=$use_v4lplugin",
++    "USE_LINUX_V4L2=$use_linux_v4l2_only",
+   ]
+ }
+ 
+diff --git a/media/gpu/args.gni b/media/gpu/args.gni
+index 33c49cd2..4cb2bf60 100644
+--- a/media/gpu/args.gni
++++ b/media/gpu/args.gni
+@@ -13,6 +13,10 @@ declare_args() {
+   # platforms which have v4l2 hardware encoder / decoder.
+   use_v4l2_codec = false
+ 
++  # Indicates that only definitions available in the mainline linux kernel
++  # will be used.
++  use_linux_v4l2_only = false
++
+   # Indicates if Video4Linux2 AML encoder is used. This is used for AML
+   # platforms which have v4l2 hardware encoder
+   use_v4l2_codec_aml = false
+diff --git a/media/gpu/gpu_video_decode_accelerator_factory.cc b/media/gpu/gpu_video_decode_accelerator_factory.cc
+index 360f54ec..9da370ea 100644
+--- a/media/gpu/gpu_video_decode_accelerator_factory.cc
++++ b/media/gpu/gpu_video_decode_accelerator_factory.cc
+@@ -29,7 +29,9 @@
+ #include "ui/gl/gl_implementation.h"
+ #elif BUILDFLAG(USE_V4L2_CODEC)
+ #include "media/gpu/v4l2/v4l2_device.h"
++#if !BUILDFLAG(USE_LINUX_V4L2)
+ #include "media/gpu/v4l2/v4l2_slice_video_decode_accelerator.h"
++#endif
+ #include "media/gpu/v4l2/v4l2_video_decode_accelerator.h"
+ #include "ui/gl/gl_surface_egl.h"
+ #endif
+@@ -64,10 +66,12 @@ gpu::VideoDecodeAcceleratorCapabilities GetDecoderCapabilitiesInternal(
+   GpuVideoAcceleratorUtil::InsertUniqueDecodeProfiles(
+       V4L2VideoDecodeAccelerator::GetSupportedProfiles(),
+       &capabilities.supported_profiles);
++#if !BUILDFLAG(USE_LINUX_V4L2)
+   GpuVideoAcceleratorUtil::InsertUniqueDecodeProfiles(
+       V4L2SliceVideoDecodeAccelerator::GetSupportedProfiles(),
+       &capabilities.supported_profiles);
+ #endif
++#endif
+ #elif defined(OS_MAC)
+   capabilities.supported_profiles =
+       VTVideoDecodeAccelerator::GetSupportedProfiles(workarounds);
+@@ -146,8 +150,10 @@ GpuVideoDecodeAcceleratorFactory::CreateVDA(
+     &GpuVideoDecodeAcceleratorFactory::CreateVaapiVDA,
+ #elif BUILDFLAG(USE_V4L2_CODEC)
+     &GpuVideoDecodeAcceleratorFactory::CreateV4L2VDA,
++#if !BUILDFLAG(USE_LINUX_V4L2)
+     &GpuVideoDecodeAcceleratorFactory::CreateV4L2SliceVDA,
+ #endif
++#endif
+ 
+ #if defined(OS_MAC)
+     &GpuVideoDecodeAcceleratorFactory::CreateVTVDA,
+@@ -207,6 +213,7 @@ GpuVideoDecodeAcceleratorFactory::CreateV4L2VDA(
+   return decoder;
+ }
+ 
++#if !BUILDFLAG(USE_LINUX_V4L2)
+ std::unique_ptr<VideoDecodeAccelerator>
+ GpuVideoDecodeAcceleratorFactory::CreateV4L2SliceVDA(
+     const gpu::GpuDriverBugWorkarounds& /*workarounds*/,
+@@ -222,6 +229,7 @@ GpuVideoDecodeAcceleratorFactory::CreateV4L2SliceVDA(
+   return decoder;
+ }
+ #endif
++#endif
+ 
+ #if defined(OS_MAC)
+ std::unique_ptr<VideoDecodeAccelerator>
+diff --git a/media/gpu/gpu_video_decode_accelerator_factory.h b/media/gpu/gpu_video_decode_accelerator_factory.h
+index 7d853c54..248fd275 100644
+--- a/media/gpu/gpu_video_decode_accelerator_factory.h
++++ b/media/gpu/gpu_video_decode_accelerator_factory.h
+@@ -97,11 +97,13 @@ class MEDIA_GPU_EXPORT GpuVideoDecodeAcceleratorFactory {
+       const gpu::GpuDriverBugWorkarounds& workarounds,
+       const gpu::GpuPreferences& gpu_preferences,
+       MediaLog* media_log) const;
++#if !BUILDFLAG(USE_LINUX_V4L2)
+   std::unique_ptr<VideoDecodeAccelerator> CreateV4L2SliceVDA(
+       const gpu::GpuDriverBugWorkarounds& workarounds,
+       const gpu::GpuPreferences& gpu_preferences,
+       MediaLog* media_log) const;
+ #endif
++#endif
+ #if defined(OS_MAC)
+   std::unique_ptr<VideoDecodeAccelerator> CreateVTVDA(
+       const gpu::GpuDriverBugWorkarounds& workarounds,
+diff --git a/media/gpu/v4l2/BUILD.gn b/media/gpu/v4l2/BUILD.gn
+index 32cc30eb..c32617be 100644
+--- a/media/gpu/v4l2/BUILD.gn
++++ b/media/gpu/v4l2/BUILD.gn
+@@ -28,23 +28,12 @@ source_set("v4l2") {
+     "buffer_affinity_tracker.h",
+     "generic_v4l2_device.cc",
+     "generic_v4l2_device.h",
+-    "v4l2_decode_surface.cc",
+-    "v4l2_decode_surface.h",
+-    "v4l2_decode_surface_handler.h",
+     "v4l2_device.cc",
+     "v4l2_device.h",
+     "v4l2_device_poller.cc",
+     "v4l2_device_poller.h",
+-    "v4l2_h264_accelerator.cc",
+-    "v4l2_h264_accelerator.h",
+-    "v4l2_h264_accelerator_chromium.cc",
+-    "v4l2_h264_accelerator_chromium.h",
+-    "v4l2_h264_accelerator_legacy.cc",
+-    "v4l2_h264_accelerator_legacy.h",
+     "v4l2_image_processor_backend.cc",
+     "v4l2_image_processor_backend.h",
+-    "v4l2_slice_video_decode_accelerator.cc",
+-    "v4l2_slice_video_decode_accelerator.h",
+     "v4l2_stateful_workaround.cc",
+     "v4l2_stateful_workaround.h",
+     "v4l2_utils.cc",
+@@ -59,25 +48,41 @@ source_set("v4l2") {
+     "v4l2_video_decoder_backend.h",
+     "v4l2_video_decoder_backend_stateful.cc",
+     "v4l2_video_decoder_backend_stateful.h",
+-    "v4l2_video_decoder_backend_stateless.cc",
+-    "v4l2_video_decoder_backend_stateless.h",
+     "v4l2_video_encode_accelerator.cc",
+     "v4l2_video_encode_accelerator.h",
+-    "v4l2_vp8_accelerator.cc",
+-    "v4l2_vp8_accelerator.h",
+-    "v4l2_vp8_accelerator_legacy.cc",
+-    "v4l2_vp8_accelerator_legacy.h",
+-    "v4l2_vp9_accelerator_chromium.cc",
+-    "v4l2_vp9_accelerator_chromium.h",
+-    "v4l2_vp9_accelerator_legacy.cc",
+-    "v4l2_vp9_accelerator_legacy.h",
+   ]
+ 
++  if (!use_linux_v4l2_only) {
++    sources += [
++      "v4l2_decode_surface.cc",
++      "v4l2_decode_surface.h",
++      "v4l2_decode_surface_handler.h",
++      "v4l2_h264_accelerator.cc",
++      "v4l2_h264_accelerator.h",
++      "v4l2_h264_accelerator_chromium.cc",
++      "v4l2_h264_accelerator_chromium.h",
++      "v4l2_h264_accelerator_legacy.cc",
++      "v4l2_h264_accelerator_legacy.h",
++      "v4l2_slice_video_decode_accelerator.cc",
++      "v4l2_slice_video_decode_accelerator.h",
++      "v4l2_video_decoder_backend_stateless.cc",
++      "v4l2_video_decoder_backend_stateless.h",
++      "v4l2_vp8_accelerator.cc",
++      "v4l2_vp8_accelerator.h",
++      "v4l2_vp8_accelerator_legacy.cc",
++      "v4l2_vp8_accelerator_legacy.h",
++      "v4l2_vp9_accelerator_chromium.cc",
++      "v4l2_vp9_accelerator_chromium.h",
++      "v4l2_vp9_accelerator_legacy.cc",
++      "v4l2_vp9_accelerator_legacy.h",
++    ]
++  }
++
+   libs = [
+     "EGL",
+     "GLESv2",
+   ]
+-
++  libs += [ "g2d" ]
+   if (use_v4l2_codec_aml) {
+     sources += [
+       "aml_v4l2_device.cc",
+diff --git a/media/gpu/v4l2/generic_v4l2_device.cc b/media/gpu/v4l2/generic_v4l2_device.cc
+index 1b8d5f4b..644cb463 100644
+--- a/media/gpu/v4l2/generic_v4l2_device.cc
++++ b/media/gpu/v4l2/generic_v4l2_device.cc
+@@ -109,13 +109,16 @@ bool GenericV4L2Device::Poll(bool poll_device, bool* event_pending) {
+     pollfds[nfds].events = POLLIN | POLLOUT | POLLERR | POLLPRI;
+     pollfd = nfds;
+     nfds++;
+-  }
++    poll_device_evt = 0;
++ }
+ 
+   if (HANDLE_EINTR(poll(pollfds, nfds, -1)) == -1) {
+     VPLOGF(1) << "poll() failed";
+     return false;
+   }
+   *event_pending = (pollfd != -1 && pollfds[pollfd].revents & POLLPRI);
++  if(poll_device)
++	  poll_device_evt = pollfds[pollfd].revents;
+   return true;
+ }
+ 
+@@ -125,10 +128,20 @@ void* GenericV4L2Device::Mmap(void* addr,
+                               int flags,
+                               unsigned int offset) {
+   DCHECK(device_fd_.is_valid());
++#if BUILDFLAG(USE_LIBV4L2)
++  if (use_libv4l2_)
++    return v4l2_mmap(addr, len, prot, flags, device_fd_.get(), offset);
++#endif
+   return mmap(addr, len, prot, flags, device_fd_.get(), offset);
+ }
+ 
+ void GenericV4L2Device::Munmap(void* addr, unsigned int len) {
++#if BUILDFLAG(USE_LIBV4L2)
++  if (use_libv4l2_) {
++    v4l2_munmap(addr, len);
++    return;
++  }
++#endif
+   munmap(addr, len);
+ }
+ 
+@@ -441,7 +454,11 @@ bool GenericV4L2Device::OpenDevicePath(const std::string& path, Type type) {
+     return false;
+ 
+ #if BUILDFLAG(USE_LIBV4L2)
++#if BUILDFLAG(USE_LINUX_V4L2)
++  if (
++#else
+   if (type == Type::kEncoder &&
++#endif
+       HANDLE_EINTR(v4l2_fd_open(device_fd_.get(), V4L2_DISABLE_CONVERSION)) !=
+           -1) {
+     DVLOGF(3) << "Using libv4l2 for " << path;
+@@ -479,7 +496,7 @@ bool GenericV4L2Device::PostSandboxInitialization() {
+ }
+ 
+ void GenericV4L2Device::EnumerateDevicesForType(Type type) {
+-  static const std::string kDecoderDevicePattern = "/dev/video-dec";
++  static const std::string kDecoderDevicePattern = "/dev/video12";
+   static const std::string kEncoderDevicePattern = "/dev/video-enc";
+   static const std::string kImageProcessorDevicePattern = "/dev/image-proc";
+   static const std::string kJpegDecoderDevicePattern = "/dev/jpeg-dec";
+@@ -564,4 +581,8 @@ std::string GenericV4L2Device::GetDevicePathFor(Type type, uint32_t pixfmt) {
+   return std::string();
+ }
+ 
++int  GenericV4L2Device::Get_polled_evt() {
++	return poll_device_evt;
++}
++
+ }  //  namespace media
+diff --git a/media/gpu/v4l2/generic_v4l2_device.h b/media/gpu/v4l2/generic_v4l2_device.h
+index 478f23b5..4e88eb0a 100644
+--- a/media/gpu/v4l2/generic_v4l2_device.h
++++ b/media/gpu/v4l2/generic_v4l2_device.h
+@@ -77,7 +77,7 @@ class GenericV4L2Device : public V4L2Device {
+ 
+   bool IsJpegDecodingSupported() override;
+   bool IsJpegEncodingSupported() override;
+-
++  int  Get_polled_evt()        override;
+  protected:
+   ~GenericV4L2Device() override;
+ 
+@@ -128,6 +128,8 @@ class GenericV4L2Device : public V4L2Device {
+   // Lazily initialize static data after sandbox is enabled.  Return false on
+   // init failure.
+   static bool PostSandboxInitialization();
++
++  int poll_device_evt;
+ };
+ }  //  namespace media
+ 
+diff --git a/media/gpu/v4l2/v4l2.sig b/media/gpu/v4l2/v4l2.sig
+index 4269fb48..71b5b378 100644
+--- a/media/gpu/v4l2/v4l2.sig
++++ b/media/gpu/v4l2/v4l2.sig
+@@ -8,3 +8,5 @@
+ LIBV4L_PUBLIC int v4l2_close(int fd);
+ LIBV4L_PUBLIC int v4l2_ioctl(int fd, unsigned long int request, ...);
+ LIBV4L_PUBLIC int v4l2_fd_open(int fd, int v4l2_flags);
++LIBV4L_PUBLIC void *v4l2_mmap(void *start, size_t length, int prot, int flags, int fd, int64_t offset);
++LIBV4L_PUBLIC int v4l2_munmap(void *_start, size_t length);
+diff --git a/media/gpu/v4l2/v4l2_device.cc b/media/gpu/v4l2/v4l2_device.cc
+index 1cff2201..98b7a35c 100644
+--- a/media/gpu/v4l2/v4l2_device.cc
++++ b/media/gpu/v4l2/v4l2_device.cc
+@@ -37,6 +37,11 @@
+ #include "media/gpu/v4l2/aml_v4l2_device.h"
+ #endif
+ 
++#include "g2d.h"
++#include "g2dExt.h"
++#include <linux/dma-buf.h>
++#include <time.h>
++
+ #define REQUEST_DEVICE "/dev/media-dec0"
+ 
+ namespace media {
+@@ -111,7 +116,11 @@ class V4L2Buffer {
+   size_t GetMemoryUsage() const;
+   const struct v4l2_buffer& v4l2_buffer() const { return v4l2_buffer_; }
+   scoped_refptr<VideoFrame> GetVideoFrame();
+-
++  std::pair<int, int> GetSavedmafd();
++  std::pair<unsigned int, unsigned int> GetSavedphys();
++  std::pair<int, int> Getg2dbufphys();
++  std::pair<void *, void *> Getg2dbufvirs();
++  const struct v4l2_format& GetFmt() const {return format_;}
+  private:
+   V4L2Buffer(scoped_refptr<V4L2Device> device,
+              enum v4l2_buf_type type,
+@@ -123,7 +132,12 @@ class V4L2Buffer {
+ 
+   scoped_refptr<V4L2Device> device_;
+   std::vector<void*> plane_mappings_;
+-
++  int dmafd0;
++  int dmafd1;
++  unsigned long phys_0;
++  unsigned long phys_1;
++  struct g2d_buf *g2dbuf_p0;
++  struct g2d_buf *g2dbuf_p1;
+   // V4L2 data as queried by QUERYBUF.
+   struct v4l2_buffer v4l2_buffer_;
+   // WARNING: do not change this to a vector or something smaller than
+@@ -172,6 +186,9 @@ V4L2Buffer::V4L2Buffer(scoped_refptr<V4L2Device> device,
+   v4l2_buffer_.type = type;
+   v4l2_buffer_.memory = memory;
+   plane_mappings_.resize(v4l2_buffer_.length);
++  dmafd0 = dmafd1  = -1;
++  phys_0 = phys_1 = 0;
++  g2dbuf_p0 = g2dbuf_p1  = NULL;
+ }
+ 
+ V4L2Buffer::~V4L2Buffer() {
+@@ -180,6 +197,10 @@ V4L2Buffer::~V4L2Buffer() {
+       if (plane_mappings_[i] != nullptr)
+         device_->Munmap(plane_mappings_[i], v4l2_buffer_.m.planes[i].length);
+   }
++  if(g2dbuf_p0 && g2dbuf_p1) {
++	  g2d_free(g2dbuf_p0);
++	  g2d_free(g2dbuf_p1);
++  }
+ }
+ 
+ bool V4L2Buffer::Query() {
+@@ -194,6 +215,28 @@ bool V4L2Buffer::Query() {
+   return true;
+ }
+ 
++std::pair<int,int> V4L2Buffer::GetSavedmafd() {
++	return std::make_pair(dmafd0,dmafd1);
++}
++
++std::pair<unsigned int, unsigned int> V4L2Buffer::GetSavedphys() {
++	return std::make_pair(phys_0,phys_1);
++}
++
++std::pair<int, int> V4L2Buffer::Getg2dbufphys() {
++	if((g2dbuf_p0)&&(g2dbuf_p1))
++		return std::make_pair(g2dbuf_p0->buf_paddr, g2dbuf_p1->buf_paddr);
++	else
++		return std::make_pair(-1, -1);
++}
++
++std::pair<void*, void*> V4L2Buffer::Getg2dbufvirs() {
++	if((g2dbuf_p0)&&(g2dbuf_p1))
++		return std::make_pair(g2dbuf_p0->buf_vaddr, g2dbuf_p1->buf_vaddr);
++	else
++		return std::make_pair(nullptr, nullptr);
++}
++
+ void* V4L2Buffer::GetPlaneMapping(const size_t plane) {
+   if (plane >= plane_mappings_.size()) {
+     VLOGF(1) << "Invalid plane " << plane << " requested.";
+@@ -252,8 +295,60 @@ scoped_refptr<VideoFrame> V4L2Buffer::CreateVideoFrame() {
+       DLOG(ERROR) << "Fail to get DMABUFs of V4L2 buffer - invalid fd";
+       return nullptr;
+     }
++    if(dmafd0 == -1)
++	    dmafd0 = dmabuf_fd.get();
++    else
++	    dmafd1 = dmabuf_fd.get();
++  }
++  //FIXME DMA_BUF_IOCTL_PHYS is removed on 5.15
++  struct dma_buf_phys{
++	  unsigned long phys;
++  };
++  std::vector<base::ScopedFD> g2dbufs_fds;
++#define DMA_BUF_IOCTL_PHYS      _IOW(DMA_BUF_BASE, 10, struct dma_buf_phys)
++  struct dma_buf_phys query0, query1;
++  int ret = ioctl(dmafd0, DMA_BUF_IOCTL_PHYS, &query0);
++  if(ret!=0) {
++	  DLOG(ERROR)<<"DMA_BUF_IOCTL_PHYS failed at dmafd" << dmafd0;
++	  return nullptr;
++  }
++  else
++	  phys_0 = query0.phys;
++
++  ret = ioctl(dmafd1, DMA_BUF_IOCTL_PHYS, &query1);
++  if(ret!=0) {
++	  DLOG(ERROR)<<"DMA_BUF_IOCTL_PHYS failed at dmafd" << dmafd1;
++	  return nullptr;
++  }
++  else
++	  phys_1 = query1.phys;
++
++  g2dbuf_p0 = g2d_alloc(format_.fmt.pix_mp.width*format_.fmt.pix_mp.height, 0);
++  g2dbuf_p1 = g2d_alloc(format_.fmt.pix_mp.width*format_.fmt.pix_mp.height/2, 0);
++  if((!g2dbuf_p0)||(!g2dbuf_p1)){
++	  DLOG(ERROR)<<"g2d buf alloc failed";
++	  return nullptr;
++  }
++
++  int tmpfd = g2d_buf_export_fd(g2dbuf_p0);
++  tmpfd = dup(tmpfd);	
++  if(tmpfd>0)
++	  g2dbufs_fds.push_back(base::ScopedFD(tmpfd));
++  else if(tmpfd == -1)
++  {
++	  DLOG(ERROR) << "Failed duplicating g2d fd";
++	  return nullptr;
++  }
++
++  tmpfd = g2d_buf_export_fd(g2dbuf_p1);
++  tmpfd = dup(tmpfd);	
++  if(tmpfd>0)
++	  g2dbufs_fds.push_back(base::ScopedFD(tmpfd));
++  else if(tmpfd == -1)
++  {
++	  DLOG(ERROR) << "Failed duplicating g2d fd";
++	  return nullptr;
+   }
+-
+   // Duplicate the fd of the last v4l2 plane until the number of fds are the
+   // same as the number of color planes.
+   while (dmabuf_fds.size() < layout->planes().size()) {
+@@ -269,7 +364,7 @@ scoped_refptr<VideoFrame> V4L2Buffer::CreateVideoFrame() {
+   gfx::Size size(format_.fmt.pix_mp.width, format_.fmt.pix_mp.height);
+ 
+   return VideoFrame::WrapExternalDmabufs(
+-      *layout, gfx::Rect(size), size, std::move(dmabuf_fds), base::TimeDelta());
++      *layout, gfx::Rect(size), size, std::move(g2dbufs_fds), base::TimeDelta());
+ }
+ 
+ scoped_refptr<VideoFrame> V4L2Buffer::GetVideoFrame() {
+@@ -798,7 +893,9 @@ void V4L2WritableBufferRef::SetConfigStore(uint32_t config_store) {
+   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+   DCHECK(buffer_data_);
+ 
++#if !BUILDFLAG(USE_LINUX_V4L2)
+   buffer_data_->v4l2_buffer_.config_store = config_store;
++#endif
+ }
+ 
+ V4L2ReadableBuffer::V4L2ReadableBuffer(const struct v4l2_buffer& v4l2_buffer,
+@@ -941,10 +1038,16 @@ V4L2Queue::V4L2Queue(scoped_refptr<V4L2Device> dev,
+     return;
+   }
+ 
++#if !BUILDFLAG(USE_LINUX_V4L2)
+   if (reqbufs.capabilities & V4L2_BUF_CAP_SUPPORTS_REQUESTS) {
+     supports_requests_ = true;
+     DVLOGF(4) << "Queue supports request API.";
+   }
++#endif
++
++  g2d_handle = NULL;
++  if(g2d_open(&g2d_handle))
++         VLOGF(1) << "g2d_open fail";
+ }
+ 
+ V4L2Queue::~V4L2Queue() {
+@@ -963,6 +1066,9 @@ V4L2Queue::~V4L2Queue() {
+     DeallocateBuffers();
+   }
+ 
++  if(g2d_handle)
++	  g2d_close(g2d_handle);
++
+   std::move(destroy_cb_).Run();
+ }
+ 
+@@ -1298,6 +1404,57 @@ std::pair<bool, V4L2ReadableBufferRef> V4L2Queue::DequeueBuffer() {
+     device_->SchedulePoll();
+ 
+   DCHECK(free_buffers_);
++
++#if 1
++  if(type_== V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
++  {
++	  std::pair<unsigned int, unsigned int> v4l_phys = buffers_[v4l2_buffer.index]->GetSavedphys();
++	  int width = buffers_[v4l2_buffer.index]->GetFmt().fmt.pix_mp.width;
++	  int height = buffers_[v4l2_buffer.index]->GetFmt().fmt.pix_mp.height;
++	  int stride = buffers_[v4l2_buffer.index]->GetFmt().fmt.pix_mp.plane_fmt[0].bytesperline;
++       	  int interlaced = (buffers_[v4l2_buffer.index]->GetFmt().fmt.pix_mp.field == V4L2_FIELD_INTERLACED);
++	  struct g2d_surfaceEx srcEx,dstEx;
++	  struct g2d_surface *src = &srcEx.base;
++	  struct g2d_surface *dst = &dstEx.base;
++	  
++	  dst->format = G2D_NV12;
++	  dst->planes[0] = buffers_[v4l2_buffer.index]->Getg2dbufphys().first;
++	  dst->planes[1] = buffers_[v4l2_buffer.index]->Getg2dbufphys().second;
++	  dstEx.tiling = G2D_LINEAR;
++	  dst->left = 0;
++	  dst->top = 0;
++	  dst->right = dst->left + width;
++	  dst->bottom = dst->top + height;
++	  dst->stride= width;
++	  dst->width  = width;
++	  dst->height = height;
++	  dst->rot  = G2D_ROTATION_0;
++	  dst->global_alpha = 0xff;
++	  dst->blendfunc = G2D_ONE_MINUS_SRC_ALPHA;
++	  dst->clrcolor = 0; 
++
++	  src->format = G2D_NV12;
++	  src->planes[0] = v4l_phys.first;
++	  src->planes[1] = v4l_phys.second;
++	  srcEx.tiling = G2D_AMPHION_TILED; 
++	  if(interlaced==1) {
++		  srcEx.tiling = static_cast<g2d_tiling>(0x18); //G2D_AMPHION_TILED | G2D_AMPHION_INTERLACED;
++		  DVLOGF(4)<<"interlaced video convert";
++	  }
++	  src->left = 0;
++	  src->top = 0;
++	  src->right = src->left + width;
++	  src->bottom = src->top + height;
++	  src->stride=  stride;
++	  src->width  = width;
++	  src->height = height;
++	  src->rot  = G2D_ROTATION_0;
++	  src->global_alpha = 0xff;
++	  src->blendfunc = G2D_ONE;
++
++	  g2d_blitEx(g2d_handle, &srcEx, &dstEx);  
++  }
++#endif
+   return std::make_pair(true, V4L2BufferRefFactory::CreateReadableRef(
+                                   v4l2_buffer, weak_this_factory_.GetWeakPtr(),
+                                   std::move(queued_frame)));
+@@ -1468,6 +1625,25 @@ scoped_refptr<V4L2Device> V4L2Device::Create() {
+ // static
+ uint32_t V4L2Device::VideoCodecProfileToV4L2PixFmt(VideoCodecProfile profile,
+                                                    bool slice_based) {
++#if BUILDFLAG(USE_LINUX_V4L2)
++  if (slice_based) {
++    LOG(ERROR) << "Slice not supported";
++    return 0;
++  }
++
++  if (profile >= H264PROFILE_MIN && profile <= H264PROFILE_MAX) {
++    return V4L2_PIX_FMT_H264;
++  } else if (profile >= VP8PROFILE_MIN && profile <= VP8PROFILE_MAX) {
++    return V4L2_PIX_FMT_VP8;
++  } else if (profile >= VP9PROFILE_MIN && profile <= VP9PROFILE_MAX) {
++    return V4L2_PIX_FMT_VP9;
++  } else if (profile == HEVCPROFILE_MAIN) {
++         return V4L2_PIX_FMT_HEVC;
++  } else {
++    DVLOGF(1) << "Unsupported profile: " << GetProfileName(profile);
++    return 0;
++  }
++#else
+   if (profile >= H264PROFILE_MIN && profile <= H264PROFILE_MAX) {
+     if (slice_based)
+       return V4L2_PIX_FMT_H264_SLICE;
+@@ -1487,8 +1663,10 @@ uint32_t V4L2Device::VideoCodecProfileToV4L2PixFmt(VideoCodecProfile profile,
+     DVLOGF(1) << "Unsupported profile: " << GetProfileName(profile);
+     return 0;
+   }
++#endif
+ }
+ 
++#if !BUILDFLAG(USE_LINUX_V4L2)
+ namespace {
+ 
+ VideoCodecProfile V4L2ProfileToVideoCodecProfile(VideoCodec codec,
+@@ -1535,9 +1713,11 @@ VideoCodecProfile V4L2ProfileToVideoCodecProfile(VideoCodec codec,
+ }
+ 
+ }  // namespace
++#endif
+ 
+ std::vector<VideoCodecProfile> V4L2Device::V4L2PixFmtToVideoCodecProfiles(
+     uint32_t pix_fmt) {
++#if !BUILDFLAG(USE_LINUX_V4L2)
+   auto get_supported_profiles = [this](
+                                     VideoCodec codec,
+                                     std::vector<VideoCodecProfile>* profiles) {
+@@ -1604,10 +1784,37 @@ std::vector<VideoCodecProfile> V4L2Device::V4L2PixFmtToVideoCodecProfiles(
+         profiles = {VP9PROFILE_PROFILE0};
+       }
+       break;
++    case V4L2_PIX_FMT_HEVC:
++      profiles = {HEVCPROFILE_MAIN};
++      break;
+     default:
+       VLOGF(1) << "Unhandled pixelformat " << FourccToString(pix_fmt);
+       return {};
+   }
++#else
++  std::vector<VideoCodecProfile> profiles;
++  switch (pix_fmt) {
++    case V4L2_PIX_FMT_H264:
++      profiles = {
++          H264PROFILE_BASELINE,
++          H264PROFILE_MAIN,
++          H264PROFILE_HIGH,
++      };
++      break;
++    case V4L2_PIX_FMT_VP8:
++      profiles = {VP8PROFILE_ANY};
++      break;
++    case V4L2_PIX_FMT_VP9:
++      profiles = {VP9PROFILE_PROFILE0};
++      break;
++    case V4L2_PIX_FMT_HEVC:
++      profiles = {HEVCPROFILE_MAIN};
++      break;
++    default:
++      VLOGF(1) << "Unhandled pixelformat " << FourccToString(pix_fmt);
++      return {};
++  }
++#endif
+ 
+   // Erase duplicated profiles.
+   std::sort(profiles.begin(), profiles.end());
+@@ -1812,8 +2019,12 @@ base::Optional<VideoFrameLayout> V4L2Device::V4L2FormatToVideoFrameLayout(
+   planes.reserve(num_color_planes);
+   for (size_t i = 0; i < num_buffers; ++i) {
+     const v4l2_plane_pix_format& plane_format = pix_mp.plane_fmt[i];
+-    planes.emplace_back(static_cast<int32_t>(plane_format.bytesperline), 0u,
+-                        plane_format.sizeimage);
++    if(i==0)  
++	    planes.emplace_back(static_cast<int32_t>(pix_mp.width), 0u,
++			    pix_mp.width*pix_mp.height);
++    else
++	    planes.emplace_back(static_cast<int32_t>(pix_mp.width), 0u,
++			    pix_mp.width*pix_mp.height/2);  
+   }
+   // For the case that #color planes > #buffers, it fills stride of color
+   // plane which does not map to buffer.
+@@ -2225,10 +2436,14 @@ bool V4L2Request::ApplyCtrls(struct v4l2_ext_controls* ctrls) {
+     return false;
+   }
+ 
++#if !BUILDFLAG(USE_LINUX_V4L2)
+   ctrls->which = V4L2_CTRL_WHICH_REQUEST_VAL;
+   ctrls->request_fd = request_fd_.get();
+ 
+   return true;
++#else
++  return false;
++#endif
+ }
+ 
+ bool V4L2Request::ApplyQueueBuffer(struct v4l2_buffer* buffer) {
+@@ -2240,10 +2455,14 @@ bool V4L2Request::ApplyQueueBuffer(struct v4l2_buffer* buffer) {
+     return false;
+   }
+ 
++#if !BUILDFLAG(USE_LINUX_V4L2)
+   buffer->flags |= V4L2_BUF_FLAG_REQUEST_FD;
+   buffer->request_fd = request_fd_.get();
+ 
+   return true;
++#else
++  return false;
++#endif
+ }
+ 
+ bool V4L2Request::Submit() {
+@@ -2254,7 +2473,11 @@ bool V4L2Request::Submit() {
+     return false;
+   }
+ 
++#if !BUILDFLAG(USE_LINUX_V4L2)
+   return HANDLE_EINTR(ioctl(request_fd_.get(), MEDIA_REQUEST_IOC_QUEUE)) == 0;
++#else
++  return false;
++#endif
+ }
+ 
+ bool V4L2Request::IsCompleted() {
+@@ -2297,6 +2520,7 @@ bool V4L2Request::Reset() {
+     return false;
+   }
+ 
++#if !BUILDFLAG(USE_LINUX_V4L2)
+   // Reinit the request to make sure we can use it for a new submission.
+   if (HANDLE_EINTR(ioctl(request_fd_.get(), MEDIA_REQUEST_IOC_REINIT)) < 0) {
+     VPLOGF(1) << "Failed to reinit request.";
+@@ -2304,6 +2528,9 @@ bool V4L2Request::Reset() {
+   }
+ 
+   return true;
++#else
++  return false;
++#endif
+ }
+ 
+ V4L2RequestRefBase::V4L2RequestRefBase(V4L2RequestRefBase&& req_base) {
+@@ -2378,6 +2605,7 @@ V4L2RequestsQueue::~V4L2RequestsQueue() {
+ base::Optional<base::ScopedFD> V4L2RequestsQueue::CreateRequestFD() {
+   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+ 
++#if !BUILDFLAG(USE_LINUX_V4L2)
+   int request_fd;
+   int ret = HANDLE_EINTR(
+         ioctl(media_fd_.get(), MEDIA_IOC_REQUEST_ALLOC, &request_fd));
+@@ -2387,6 +2615,9 @@ base::Optional<base::ScopedFD> V4L2RequestsQueue::CreateRequestFD() {
+   }
+ 
+   return base::ScopedFD(request_fd);
++#else
++  return base::nullopt;
++#endif
+ }
+ 
+ base::Optional<V4L2RequestRef> V4L2RequestsQueue::GetFreeRequest() {
+diff --git a/media/gpu/v4l2/v4l2_device.h b/media/gpu/v4l2/v4l2_device.h
+index 62262043..4aa407e3 100644
+--- a/media/gpu/v4l2/v4l2_device.h
++++ b/media/gpu/v4l2/v4l2_device.h
+@@ -453,7 +453,7 @@ class MEDIA_GPU_EXPORT V4L2Queue
+   base::Optional<struct v4l2_format> current_format_;
+ 
+   std::vector<std::unique_ptr<V4L2Buffer>> buffers_;
+-
++  void* g2d_handle;
+   // Buffers that are available for client to get and submit.
+   // Buffers in this list are not referenced by anyone else than ourselves.
+   scoped_refptr<V4L2BuffersList> free_buffers_;
+@@ -743,7 +743,7 @@ class MEDIA_GPU_EXPORT V4L2Device
+   // Return true if JPEG codec is supported, false otherwise.
+   virtual bool IsJpegDecodingSupported() = 0;
+   virtual bool IsJpegEncodingSupported() = 0;
+-
++  virtual int Get_polled_evt() = 0;
+   // Start polling on this V4L2Device. |event_callback| will be posted to
+   // the caller's sequence if a buffer is ready to be dequeued and/or a V4L2
+   // event has been posted. |error_callback| will be posted to the client's
+diff --git a/media/gpu/v4l2/v4l2_vda_helpers.cc b/media/gpu/v4l2/v4l2_vda_helpers.cc
+index ca557f5b..645b6a38 100644
+--- a/media/gpu/v4l2/v4l2_vda_helpers.cc
++++ b/media/gpu/v4l2/v4l2_vda_helpers.cc
+@@ -12,6 +12,7 @@
+ #include "media/gpu/v4l2/v4l2_device.h"
+ #include "media/gpu/v4l2/v4l2_image_processor_backend.h"
+ #include "media/video/h264_parser.h"
++#include "media/video/h265_parser.h"
+ 
+ namespace media {
+ namespace v4l2_vda_helpers {
+@@ -154,6 +155,9 @@ InputBufferFragmentSplitter::CreateFromProfile(
+     case kCodecVP9:
+       // VP8/VP9 don't need any frame splitting, use the default implementation.
+       return std::make_unique<v4l2_vda_helpers::InputBufferFragmentSplitter>();
++    case kCodecHEVC:
++      return std::make_unique<
++	      v4l2_vda_helpers::H265InputBufferFragmentSplitter>();
+     default:
+       LOG(ERROR) << "Unhandled profile: " << profile;
+       return nullptr;
+@@ -273,5 +277,120 @@ bool H264InputBufferFragmentSplitter::IsPartialFramePending() const {
+   return partial_frame_pending_;
+ }
+ 
++H265InputBufferFragmentSplitter::H265InputBufferFragmentSplitter()
++    : h265_parser_(new H265Parser()) {}
++
++H265InputBufferFragmentSplitter::~H265InputBufferFragmentSplitter() = default;
++
++bool H265InputBufferFragmentSplitter::AdvanceFrameFragment(const uint8_t* data,
++                                                           size_t size,
++                                                           size_t* endpos) {
++  DCHECK(h265_parser_);
++
++  // For H265, we need to feed HW one frame at a time.  This is going to take
++  // some parsing of our input stream.
++  h265_parser_->SetStream(data, size);
++  H265NALU nalu;
++  H265Parser::Result result;
++  bool has_frame_data = false;
++  *endpos = 0;
++  DVLOGF(4) << "H265InputBufferFragmentSplitter::AdvanceFrameFragment size" << size;
++  // Keep on peeking the next NALs while they don't indicate a frame
++  // boundary.
++  while (true) {
++    bool end_of_frame = false;
++    result = h265_parser_->AdvanceToNextNALU(&nalu);
++    if (result == H265Parser::kInvalidStream ||
++        result == H265Parser::kUnsupportedStream) {
++      return false;
++    }
++
++    DVLOGF(4) << "NALU type " << nalu.nal_unit_type << "NALU size" << nalu.size;
++    if (result == H265Parser::kEOStream) {
++      // We've reached the end of the buffer before finding a frame boundary.
++      if (has_frame_data){
++	      //    partial_frame_pending_ = true;
++	      //    DVLOGF(4)<<"partial_frame_pending_ true as H265Parser::kEOStream has_frame_data";      
++      }
++      *endpos = size;
++      DVLOGF(4)<<  " MET kEOStream  endpos " << *endpos <<" nalu.size " << nalu.size;
++      return true;
++    }
++    switch (nalu.nal_unit_type) {
++      case H265NALU::TRAIL_N:
++      case H265NALU::TRAIL_R:
++      case H265NALU::TSA_N:
++      case H265NALU::TSA_R:
++      case H265NALU::STSA_N:
++      case H265NALU::STSA_R:
++      case H265NALU::RADL_R:
++      case H265NALU::RADL_N:
++      case H265NALU::RASL_N:
++      case H265NALU::RASL_R:
++      case H265NALU::BLA_W_LP:
++      case H265NALU::BLA_W_RADL:
++      case H265NALU::BLA_N_LP:
++      case H265NALU::IDR_W_RADL:
++      case H265NALU::IDR_N_LP:
++      case H265NALU::CRA_NUT:
++        if (nalu.size < 1)
++          return false;
++
++        has_frame_data = true;
++
++        // For these two, if the "first_mb_in_slice" field is zero, start a
++        // new frame and return.  This field is Exp-Golomb coded starting on
++        // the eighth data bit of the NAL; a zero value is encoded with a
++        // leading '1' bit in the byte, which we can detect as the byte being
++        // (unsigned) greater than or equal to 0x80.
++        if (nalu.data[1] >= 0x80) {
++          end_of_frame = true;
++          break;
++        }
++        break;
++      case H265NALU::VPS_NUT:
++      case H265NALU::SPS_NUT:
++      case H265NALU::PPS_NUT:
++      case H265NALU::AUD_NUT:
++      case H265NALU::EOS_NUT:
++      case H265NALU::EOB_NUT:
++      case H265NALU::FD_NUT:
++      case H265NALU::PREFIX_SEI_NUT:
++      case H265NALU::SUFFIX_SEI_NUT:
++        // These unconditionally signal a frame boundary.
++        end_of_frame = true;
++        break;
++      default:
++        // For all others, keep going.
++        break;
++    }
++    if (end_of_frame) {
++      if (!partial_frame_pending_ && *endpos == 0) {
++        // The frame was previously restarted, and we haven't filled the
++        // current frame with any contents yet.  Start the new frame here and
++        // continue parsing NALs.
++      } else  {
++        // The frame wasn't previously restarted and/or we have contents for
++        // the current frame; signal the start of a new frame here: we don't
++        // have a partial frame anymore.
++        partial_frame_pending_ = false;
++      //  return true;
++      }
++    }
++    *endpos = (nalu.data + nalu.size) - data;
++  }
++  NOTREACHED();
++  return false;
++}
++
++void H265InputBufferFragmentSplitter::Reset() {
++  partial_frame_pending_ = false;
++  h265_parser_.reset(new H265Parser());
++}
++
++bool H265InputBufferFragmentSplitter::IsPartialFramePending() const {
++  return partial_frame_pending_;
++}
++
+ }  // namespace v4l2_vda_helpers
+ }  // namespace media
+diff --git a/media/gpu/v4l2/v4l2_vda_helpers.h b/media/gpu/v4l2/v4l2_vda_helpers.h
+index 05b74a32..d7c7456e 100644
+--- a/media/gpu/v4l2/v4l2_vda_helpers.h
++++ b/media/gpu/v4l2/v4l2_vda_helpers.h
+@@ -18,7 +18,7 @@ namespace media {
+ 
+ class V4L2Device;
+ class H264Parser;
+-
++class H265Parser;
+ // Helper static methods to be shared between V4L2VideoDecodeAccelerator and
+ // V4L2SliceVideoDecodeAccelerator. This avoids some code duplication between
+ // these very similar classes.
+@@ -115,6 +115,25 @@ class H264InputBufferFragmentSplitter : public InputBufferFragmentSplitter {
+   bool partial_frame_pending_ = false;
+ };
+ 
++class H265InputBufferFragmentSplitter : public InputBufferFragmentSplitter {
++ public:
++  explicit H265InputBufferFragmentSplitter();
++  ~H265InputBufferFragmentSplitter() override;
++
++  bool AdvanceFrameFragment(const uint8_t* data,
++                            size_t size,
++                            size_t* endpos) override;
++  void Reset() override;
++  bool IsPartialFramePending() const override;
++
++ private:
++  // For H264 decode, hardware requires that we send it frame-sized chunks.
++  // We'll need to parse the stream.
++  std::unique_ptr<H265Parser> h265_parser_;
++  // Set if we have a pending incomplete frame in the input buffer.
++  bool partial_frame_pending_ = false;
++};
++
+ }  // namespace v4l2_vda_helpers
+ }  // namespace media
+ 
+diff --git a/media/gpu/v4l2/v4l2_video_decode_accelerator.cc b/media/gpu/v4l2/v4l2_video_decode_accelerator.cc
+index f0822769..c68c851b 100644
+--- a/media/gpu/v4l2/v4l2_video_decode_accelerator.cc
++++ b/media/gpu/v4l2/v4l2_video_decode_accelerator.cc
+@@ -13,6 +13,7 @@
+ #include <sys/eventfd.h>
+ #include <sys/ioctl.h>
+ #include <sys/mman.h>
++#include <unistd.h>
+ 
+ #include "base/bind.h"
+ #include "base/command_line.h"
+@@ -74,7 +75,7 @@ namespace media {
+ 
+ // static
+ const uint32_t V4L2VideoDecodeAccelerator::supported_input_fourccs_[] = {
+-    V4L2_PIX_FMT_H264, V4L2_PIX_FMT_VP8, V4L2_PIX_FMT_VP9,
++    V4L2_PIX_FMT_H264, V4L2_PIX_FMT_VP8, V4L2_PIX_FMT_VP9, V4L2_PIX_FMT_HEVC, 
+ };
+ 
+ // static
+@@ -307,7 +308,9 @@ bool V4L2VideoDecodeAccelerator::CheckConfig(const Config& config) {
+              << " fourcc: " << FourccToString(input_format_fourcc_);
+     return false;
+   }
+-
++  int width, height;
++  height = config.initial_expected_coded_size.height();
++  width = config.initial_expected_coded_size.width();
+   // Capabilities check.
+   struct v4l2_capability caps;
+   const __u32 kCapsRequired = V4L2_CAP_VIDEO_M2M_MPLANE | V4L2_CAP_STREAMING;
+@@ -331,7 +334,7 @@ bool V4L2VideoDecodeAccelerator::CheckConfig(const Config& config) {
+   if (!output_queue_)
+     return false;
+ 
+-  if (!SetupFormats())
++  if (!SetupFormats(width, height))
+     return false;
+ 
+   // We have confirmed that |config| is supported, tell the good news to the
+@@ -1213,8 +1216,7 @@ void V4L2VideoDecodeAccelerator::ServiceDeviceTask(bool event_pending) {
+     gfx::Size visible_size;
+     bool again;
+     if (GetFormatInfo(&format, &visible_size, &again) && !again) {
+-      resolution_change_pending = true;
+-      DequeueResolutionChangeEvent();
++      resolution_change_pending = DequeueResolutionChangeEvent();
+     }
+   }
+ 
+@@ -1320,8 +1322,9 @@ void V4L2VideoDecodeAccelerator::Enqueue() {
+       // yet. Also, V4L2VDA calls STREAMOFF and STREAMON after resolution
+       // change. They implicitly send a V4L2_DEC_CMD_STOP and V4L2_DEC_CMD_START
+       // to the decoder.
+-      if (input_queue_->QueuedBuffersCount() > 0)
+-        break;
++      if (input_queue_->QueuedBuffersCount() > 0){
++      //  break;
++      }
+ 
+       if (coded_size_.IsEmpty() || !input_queue_->IsStreaming()) {
+         // In these situations, we should call NotifyFlushDone() immediately:
+@@ -1421,14 +1424,33 @@ void V4L2VideoDecodeAccelerator::Dequeue() {
+   DCHECK_NE(decoder_state_, kUninitialized);
+   DCHECK(input_queue_);
+   DCHECK(output_queue_);
+-
+-  while (input_queue_->QueuedBuffersCount() > 0) {
+-    if (!DequeueInputBuffer())
+-      break;
+-  }
+-  while (output_queue_->QueuedBuffersCount() > 0) {
+-    if (!DequeueOutputBuffer())
+-      break;
++  int cnt_in = input_queue_->QueuedBuffersCount();
++  int cnt_out = output_queue_->QueuedBuffersCount();
++  if((device_->Get_polled_evt()&POLLOUT)) 
++  {
++	  while ((input_queue_->QueuedBuffersCount() > 0)) //this while make some dqbuf -11 but keep as it
++	  {
++		  if (!DequeueInputBuffer())
++			  break;
++	  }
++	  DVLOGF(2)<<"in queue from "<< cnt_in << "to" << input_queue_->QueuedBuffersCount() ;
++  }
++  if(device_->Get_polled_evt()&POLLIN || flush_awaiting_last_output_buffer_)
++  {
++	  if(DequeueOutputBuffer())
++		  DVLOGF(2)<<" out queue from "<< cnt_out << "to" << output_queue_->QueuedBuffersCount() ;
++	  else if(!flush_awaiting_last_output_buffer_)
++		  DVLOGF(1)<<"BUG POLLIN but failed dequeue output";
++
++	  if(flush_awaiting_last_output_buffer_){
++		  DequeueOutputBuffer();
++		  if(errno == EPIPE){
++			  DVLOGF(1)<<"flush_awaiting_last_output_buffer_ got EPIPE that is EOS";
++			  flush_awaiting_last_output_buffer_ = false;
++		  }
++		  else
++			  DVLOGF(1) << "flush_awaiting_last_output_buffer_ got no EPIPE but errono" << errno;
++	  }
+   }
+   NotifyFlushDoneIfNeeded();
+ }
+@@ -1698,13 +1720,13 @@ bool V4L2VideoDecodeAccelerator::IsDecoderCmdSupported() {
+   // CMD_STOP should always succeed. If the decoder is started, the command can
+   // flush it. If the decoder is stopped, the command does nothing. We use this
+   // to know if a driver supports V4L2_DEC_CMD_STOP to flush.
+-  struct v4l2_decoder_cmd cmd;
++  /*struct v4l2_decoder_cmd cmd;
+   memset(&cmd, 0, sizeof(cmd));
+   cmd.cmd = V4L2_DEC_CMD_STOP;
+   if (device_->Ioctl(VIDIOC_TRY_DECODER_CMD, &cmd) != 0) {
+     VLOGF(2) "V4L2_DEC_CMD_STOP is not supported.";
+     return false;
+-  }
++  }*/
+ 
+   return true;
+ }
+@@ -2124,6 +2146,16 @@ bool V4L2VideoDecodeAccelerator::GetFormatInfo(struct v4l2_format* format,
+   if (visible_size != nullptr)
+     *visible_size = GetVisibleSize(coded_size);
+ 
++  if((format->fmt.pix_mp.width==0)&&(format->fmt.pix_mp.height==0))
++  {
++	  *again = true;
++	  DVLOGF(1)<<"As got width=height=0 again";
++	  LOG(ERROR)<<"As got width=height=0 again";
++  }else{
++	  DVLOGF(1)<<"format wxh" <<format->fmt.pix_mp.width << "x" <<format->fmt.pix_mp.height;
++	  LOG(ERROR)<<"format wxh" <<format->fmt.pix_mp.width << "x" <<format->fmt.pix_mp.height;
++  }
++
+   return true;
+ }
+ 
+@@ -2204,7 +2236,7 @@ bool V4L2VideoDecodeAccelerator::CreateInputBuffers() {
+   return true;
+ }
+ 
+-bool V4L2VideoDecodeAccelerator::SetupFormats() {
++bool V4L2VideoDecodeAccelerator::SetupFormats(int width, int height) {
+   DCHECK(decoder_thread_.task_runner()->BelongsToCurrentThread());
+   DCHECK_EQ(decoder_state_, kInitialized);
+   DCHECK(!input_queue_->IsStreaming());
+@@ -2243,6 +2275,12 @@ bool V4L2VideoDecodeAccelerator::SetupFormats() {
+   format.fmt.pix_mp.pixelformat = input_format_fourcc_;
+   format.fmt.pix_mp.plane_fmt[0].sizeimage = input_size;
+   format.fmt.pix_mp.num_planes = 1;
++
++  if(V4L2_PIX_FMT_VP8 == input_format_fourcc_){
++	  format.fmt.pix_mp.width = width;
++	  format.fmt.pix_mp.height = height;
++  }
++
+   IOCTL_OR_ERROR_RETURN_FALSE(VIDIOC_S_FMT, &format);
+   DCHECK_EQ(format.fmt.pix_mp.pixelformat, input_format_fourcc_);
+ 
+diff --git a/media/gpu/v4l2/v4l2_video_decode_accelerator.h b/media/gpu/v4l2/v4l2_video_decode_accelerator.h
+index 1460737b..1d5e0fe4 100644
+--- a/media/gpu/v4l2/v4l2_video_decode_accelerator.h
++++ b/media/gpu/v4l2/v4l2_video_decode_accelerator.h
+@@ -392,7 +392,7 @@ class MEDIA_GPU_EXPORT V4L2VideoDecodeAccelerator
+   bool DestroyOutputBuffers();
+ 
+   // Set input and output formats before starting decode.
+-  bool SetupFormats();
++  bool SetupFormats(int, int);
+   // Reset image processor and drop all processing frames.
+   bool ResetImageProcessor();
+ 
+diff --git a/media/gpu/v4l2/v4l2_video_decoder.cc b/media/gpu/v4l2/v4l2_video_decoder.cc
+index 34c2fc68..a9d27dbc 100644
+--- a/media/gpu/v4l2/v4l2_video_decoder.cc
++++ b/media/gpu/v4l2/v4l2_video_decoder.cc
+@@ -19,7 +19,10 @@
+ #include "media/gpu/gpu_video_decode_accelerator_helpers.h"
+ #include "media/gpu/macros.h"
+ #include "media/gpu/v4l2/v4l2_video_decoder_backend_stateful.h"
++
++#if !BUILDFLAG(USE_LINUX_V4L2)
+ #include "media/gpu/v4l2/v4l2_video_decoder_backend_stateless.h"
++#endif
+ 
+ namespace media {
+ 
+@@ -35,7 +38,9 @@ constexpr size_t kNumInputBuffers = 8;
+ 
+ // Input format V4L2 fourccs this class supports.
+ constexpr uint32_t kSupportedInputFourccs[] = {
++#if !BUILDFLAG(USE_LINUX_V4L2)
+     V4L2_PIX_FMT_H264_SLICE, V4L2_PIX_FMT_VP8_FRAME, V4L2_PIX_FMT_VP9_FRAME,
++#endif
+     V4L2_PIX_FMT_H264,       V4L2_PIX_FMT_VP8,       V4L2_PIX_FMT_VP9,
+ };
+ 
+@@ -248,6 +253,7 @@ StatusCode V4L2VideoDecoder::InitializeBackend() {
+              << " and fourcc: " << FourccToString(input_format_fourcc);
+     backend_ = std::make_unique<V4L2StatefulVideoDecoderBackend>(
+         this, device_, profile_, decoder_task_runner_);
++#if !BUILDFLAG(USE_LINUX_V4L2)
+   } else {
+     DCHECK_EQ(preferred_api_and_format.first, kStateless);
+     VLOGF(1) << "Using a stateless API for profile: "
+@@ -255,6 +261,7 @@ StatusCode V4L2VideoDecoder::InitializeBackend() {
+              << " and fourcc: " << FourccToString(input_format_fourcc);
+     backend_ = std::make_unique<V4L2StatelessVideoDecoderBackend>(
+         this, device_, profile_, decoder_task_runner_);
++#endif
+   }
+ 
+   if (!backend_->Initialize()) {
+diff --git a/media/media_options.gni b/media/media_options.gni
+index 61c804e9..2b606365 100644
+--- a/media/media_options.gni
++++ b/media/media_options.gni
+@@ -57,7 +57,7 @@ declare_args() {
+   # fuzzer builds.
+   enable_platform_hevc =
+       proprietary_codecs &&
+-      (is_chromecast || use_chromeos_protected_media || use_fuzzing_engine)
++      (is_chromecast || use_chromeos_protected_media || use_fuzzing_engine || use_v4l2_codec)
+ 
+   # Enable Dolby Vision demuxing. Enable by default for Chromecast. Actual
+   # decoding must be provided by the platform. Note some Dolby Vision profiles
+@@ -178,7 +178,7 @@ if (is_chromecast) {
+   ]
+   _default_mojo_media_host = "gpu"
+ } else if (is_chromeos_ash || is_mac || is_win ||
+-           ((is_linux || is_chromeos_lacros) && use_vaapi)) {
++           ((is_linux || is_chromeos_lacros) && (use_vaapi || use_v4l2_codec))) {
+   _default_mojo_media_services = [ "video_decoder" ]
+   _default_mojo_media_host = "gpu"
+ }
+diff --git a/ui/ozone/platform/wayland/host/wayland_connection.cc b/ui/ozone/platform/wayland/host/wayland_connection.cc
+index 3badbd4f..78034882 100644
+--- a/ui/ozone/platform/wayland/host/wayland_connection.cc
++++ b/ui/ozone/platform/wayland/host/wayland_connection.cc
+@@ -121,7 +121,6 @@ bool WaylandConnection::Initialize() {
+       &WaylandConnection::Global,
+       &WaylandConnection::GlobalRemove,
+   };
+-
+   display_.reset(wl_display_connect(nullptr));
+   if (!display_) {
+     LOG(ERROR) << "Failed to connect to Wayland display";
+@@ -140,7 +139,6 @@ bool WaylandConnection::Initialize() {
+     LOG(ERROR) << "Failed to get Wayland registry";
+     return false;
+   }
+-
+   // Now that the connection with the display server has been properly
+   // estabilished, initialize the event source and input objects.
+   DCHECK(!event_source_);
+@@ -152,7 +150,6 @@ bool WaylandConnection::Initialize() {
+          !wayland_output_manager_->IsOutputReady()) {
+     RoundTripQueue();
+   }
+-
+   buffer_manager_host_ = std::make_unique<WaylandBufferManagerHost>(this);
+ 
+   if (!compositor_) {
+@@ -249,6 +246,11 @@ void WaylandConnection::UpdateInputDevices(wl_seat* seat,
+   auto has_keyboard = capabilities & WL_SEAT_CAPABILITY_KEYBOARD;
+   auto has_touch = capabilities & WL_SEAT_CAPABILITY_TOUCH;
+ 
++  if(GetHotplugEventObserver() == NULL) {
++	  LOG(ERROR) << "skip UpdateInputDevices as GetHotplugEventObserver NULL";
++  	  return;
++  }
++  LOG(ERROR)<< "has_pointer" << has_pointer << " keyboard " << has_keyboard << "touch " << has_touch;
+   // Container for devices. Can be empty.
+   std::vector<InputDevice> devices;
+ 
+@@ -271,15 +273,22 @@ void WaylandConnection::UpdateInputDevices(wl_seat* seat,
+       LOG(ERROR) << "Failed to get wl_pointer from seat";
+     }
+   }
+-
+   // Notify about mouse changes.
+-  GetHotplugEventObserver()->OnMouseDevicesUpdated(devices);
++  if(!devices.empty()) {
++	  GetHotplugEventObserver()->OnMouseDevicesUpdated(devices);
++  }
+ 
+   // Clear the local container to store a keyboard device now.
+   devices.clear();
+   if (!has_keyboard) {
+     keyboard_.reset();
+   } else if (!keyboard_) {
++     
++    if((serial_.serial == 0xff) && (serial_.event_type == ET_LAST)){	  
++	    LOG(ERROR) << "SKIP KEY";
++	    goto bak;
++    }
++
+     if (!CreateKeyboard()) {
+       LOG(ERROR) << "Failed to create WaylandKeyboard";
+     } else {
+@@ -290,7 +299,9 @@ void WaylandConnection::UpdateInputDevices(wl_seat* seat,
+   }
+ 
+   // Notify about mouse changes.
+-  GetHotplugEventObserver()->OnKeyboardDevicesUpdated(devices);
++ if(!devices.empty()) {
++	 GetHotplugEventObserver()->OnKeyboardDevicesUpdated(devices);
++ }
+ 
+   // TODO(msisov): wl_touch doesn't expose the display it belongs to. Thus, it's
+   // impossible to figure out the size of the touchscreen for TouchscreenDevice
+@@ -304,12 +315,16 @@ void WaylandConnection::UpdateInputDevices(wl_seat* seat,
+       LOG(ERROR) << "Failed to get wl_touch from seat";
+     }
+   }
+-
++bak:
+   // Notify update completed.
+   GetHotplugEventObserver()->OnDeviceListsComplete();
++  LOG(ERROR) << "UpdateInputDevices exit";
+ }
+ 
+ bool WaylandConnection::CreateKeyboard() {
++  if(!seat_)
++	  return false;
++
+   wl_keyboard* keyboard = wl_seat_get_keyboard(seat_.get());
+   if (!keyboard)
+     return false;
+diff --git a/ui/ozone/platform/wayland/ozone_platform_wayland.cc b/ui/ozone/platform/wayland/ozone_platform_wayland.cc
+index f3269c19..254a1899 100644
+--- a/ui/ozone/platform/wayland/ozone_platform_wayland.cc
++++ b/ui/ozone/platform/wayland/ozone_platform_wayland.cc
+@@ -171,7 +171,6 @@ class OzonePlatformWayland : public OzonePlatform {
+     connection_ = std::make_unique<WaylandConnection>();
+     if (!connection_->Initialize())
+       LOG(FATAL) << "Failed to initialize Wayland platform";
+-
+     buffer_manager_connector_ = std::make_unique<WaylandBufferManagerConnector>(
+         connection_->buffer_manager_host());
+ #if BUILDFLAG(IS_CHROMEOS_LACROS)
+@@ -198,6 +197,14 @@ class OzonePlatformWayland : public OzonePlatform {
+ 
+   void InitializeGPU(const InitParams& args) override {
+     buffer_manager_ = std::make_unique<WaylandBufferManagerGpu>();
++    
++    if(connection_.get()==NULL){
++	    DeviceDataManager::CreateInstance();
++	    connection_ = std::make_unique<WaylandConnection>();
++	    connection_->set_serial(0xff, ET_LAST);	
++	    if (!connection_->Initialize())
++		    LOG(FATAL) << "Failed to initialize Wayland platform";
++    }
+     surface_factory_ = std::make_unique<WaylandSurfaceFactory>(
+         connection_.get(), buffer_manager_.get());
+     overlay_manager_ = std::make_unique<WaylandOverlayManager>();

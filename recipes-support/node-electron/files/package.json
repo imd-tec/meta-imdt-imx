@@ -1,0 +1,16 @@
+{
+    "dependencies": {
+      "electron": "^11.5.0"
+    },
+    "name": "myapp",
+    "version": "1.0.0",
+    "main": "main.js",
+    "devDependencies": {},
+    "scripts": {
+      "start": "electron . --no-sandbox"
+    },
+    "author": "IMDT",
+    "license": "MIT",
+    "description": ""
+  }
+  
