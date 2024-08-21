@@ -42,6 +42,4 @@ IMAGE_INSTALL_append = " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'x11 wayland', 'weston-xwayland xterm', '', d)} \
 "
 
-TOOLCHAIN_TARGET_TASK_append += " armnn-dev onnxruntime-dev"
-
 export IMAGE_BASENAME = "imdt-image-mm-chromium-beta"
