@@ -4,15 +4,8 @@
 
 SUMMARY = "Linux kernel provided and supported by IMD Technologies"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
-
 SRC_URI = "git://github.com/imd-tec/linux-imdt.git;protocol=https;branch=imdt-5.10.72"
-SRCREV = "fb6d21d2b2ec640006bef247209db7d63f710a67"
-
-SRC_URI_append = " \
-    file://imx-vpu-decode.patch \
-    file://defconfig-hantro.patch \
-"
+SRCREV = "0ad98baa2994912b4eb102745b4202e1d9e1badb"
 
 KERNEL_DEFCONFIG = "imx_v8_defconfig"
 KERNEL_DEFCONFIG_imx8mp-imdt-pico-em = "imdt_pico_em_defconfig"
