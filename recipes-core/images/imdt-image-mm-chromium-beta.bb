@@ -29,6 +29,7 @@ IMAGE_INSTALL_append = " \
     git \
     chromium-ozone-wayland \
     node-electron \
+    electron-fiddle \
     ${OPENCV_PKGS} \
     packagegroup-core-full-cmdline \
     packagegroup-tools-bluetooth \
