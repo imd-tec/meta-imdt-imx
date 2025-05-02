@@ -6,7 +6,30 @@ DESCRIPTION = "This is the basic core image with minimal tests"
 
 inherit core-image
 
-IMAGE_FEATURES += " \
+ROOTFS_POSTPROCESS_COMMAND += "write_issue_file;"
+
+write_issue_file() {
+    ISSUE_FILE="${IMAGE_ROOTFS}/etc/issue"
+    MANIFEST_DIR="${TOPDIR}/../.repo/manifests"
+    BSP_VERSION="0.0.0"
+    MANIFEST_NAME="Unknown"
+
+    if [ -d "${MANIFEST_DIR}" ]; then
+        INCLUDED_MANIFEST=$(sed -n 's/.*<include name="\([^"]*\)".*/\1/p' ${TOPDIR}/../.repo/manifest.xml)
+        INCLUDED_MANIFEST_PATH="${MANIFEST_DIR}/${INCLUDED_MANIFEST}"
+
+        if [ -f "${INCLUDED_MANIFEST_PATH}" ]; then
+            LINE=$(sed -n 's/.*<manifest \([^>]*\).*/\1/p' ${INCLUDED_MANIFEST_PATH})
+            MANIFEST_NAME=$(echo $LINE | sed -n 's/.*name="\([^"]*\)".*/\1/p')
+            BSP_VERSION=$(echo $LINE | sed -n 's/.*version="\([^"]*\)".*/\1/p')
+            [ -z "$BSP_VERSION" ] && BSP_VERSION="NO_VERSION_TAG"
+        fi
+    fi
+
+    echo "IMDT Pico BSP v${BSP_VERSION}, Image: ${IMAGE_BASENAME}, Manifest: ${MANIFEST_NAME}" > $ISSUE_FILE
+}
+
+IMAGE_FEATURES_append = " \
     debug-tweaks \
     package-management \
     ssh-server-dropbear \
@@ -27,9 +50,6 @@ IMAGE_INSTALL_append = " \
     swupdate-progress \
     swupdate-www \
     u-boot-fw-utils \
-"
-
-IMAGE_INSTALL_append_imdt-pico = " \
     wpa-supplicant \
     wireless-tools \
     hostapd \
@@ -42,8 +62,9 @@ IMAGE_INSTALL_append_imdt-pico = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-ethernet', 'imdt-ethernet-utils', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-can', 'libsocketcan can-utils imdt-can-utils', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-rng', 'imdt-rng-test', '', d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-rtc', 'imdt-rtc-utils', '', d)} \
 "
-
+IMAGE_FSTYPES="wic.gz tar.gz"
 # Set the default target
 SYSTEMD_DEFAULT_TARGET = "multi-user.target"
 

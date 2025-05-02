@@ -7,4 +7,4 @@ require include/imdt-image-swu.inc
 inherit swupdate generate-sw-description
 
 # Dependencies to build before creating the SWUpdate image
-IMDT_BASE_IMAGE = "imdt-image-multimedia-ml"
+IMDT_BASE_IMAGE = "imdt-image-multimedia"

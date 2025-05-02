@@ -1,0 +1,52 @@
+software =
+{
+    version = "1.0.0";
+
+    @MACHINE@ =
+    {
+        hardware-compatibility: [ "1.0" ];
+
+        files:
+        (
+            {
+                filename = "Image";
+                device = "/dev/update-boot";
+                path = "Image";
+                filesystem = "vfat";
+            },
+            {
+                filename = "@DTB@";
+                device = "/dev/update-boot";
+                path = "@DTB@";
+                filesystem = "vfat";
+            },
+            {
+                filename = "tee.bin";
+                device = "/dev/update-boot";
+                path = "tee.bin";
+                filesystem = "vfat";
+            }
+        );
+
+        images:
+        (
+            {
+                filename = "@TARFILE@";
+                type = "archive";
+                compressed = true;
+                device = "/dev/update-root";
+                filesystem = "ext4";
+                path = "/";
+            }
+        );
+
+        scripts:
+        (
+            {
+                filename = "update.sh";
+                type = "shellscript";
+            }
+        );
+    };
+};
+

@@ -2,7 +2,7 @@
 # Copyright (c) 2023 IMD Technologies
 #
 
-DESCRIPTION = "Utilities for controlling and configuring the Pico-e ethernet adapter"
+DESCRIPTION = "Utilities for controlling and configuring the Pico ethernet adapter"
 
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"

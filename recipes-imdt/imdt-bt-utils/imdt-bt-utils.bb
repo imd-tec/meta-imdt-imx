@@ -21,13 +21,9 @@ do_install() {
 
     install -d ${D}/opt/imdt/bluetooth
     install -m 0744 ${WORKDIR}/start.sh ${D}/opt/imdt/bluetooth
-}
-
-
-do_install_append_imdt-pico-e() {
-    install -d ${D}/opt/imdt/bluetooth
     install -m 0744 ${WORKDIR}/start_bt_1xk.sh ${D}/opt/imdt/bluetooth/start.sh
 }
+
 
 SYSTEMD_AUTO_ENABLE = "disable"
 SYSTEMD_SERVICE_${PN} = "imdt-bluetooth-init.service"

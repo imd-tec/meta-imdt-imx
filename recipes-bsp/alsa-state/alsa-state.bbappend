@@ -1,6 +1,6 @@
-FILESEXTRAPATHS_prepend_imdt-pico-e := "${THISDIR}/files:"
+FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
-SRC_URI_append_imdt-pico-e = " \
+SRC_URI_append = " \
     file://mozart.wav \
     file://asound-card-default.conf \
     file://asound-hdmi-default.conf \
@@ -8,7 +8,7 @@ SRC_URI_append_imdt-pico-e = " \
 "
 RDEPENDS_${PN} += "bash"
 
-do_install_append_imdt-pico-e () {
+do_install_append () {
 
     # install audio files and scripts
     install -d ${D}/opt/imdt/audio/
@@ -24,7 +24,7 @@ do_install_append_imdt-pico-e () {
     install -m 0644 ${WORKDIR}/asound-card-default.conf ${D}${sysconfdir}/asound.conf
 }
 
-FILES_${PN}_append_imdt-pico-e = " \
+FILES_${PN}_append = " \
     /opt/imdt/audio/ \
     ${sysconfdir}/asound-card-default.conf \
     ${sysconfdir}/asound-hdmi-default.conf \
