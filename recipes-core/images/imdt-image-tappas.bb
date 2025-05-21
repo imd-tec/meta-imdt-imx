@@ -6,9 +6,9 @@ DESCRIPTION = "This is the core image with IMDT's demo applications and hailo ta
 
 require recipes-core/images/imdt-image-multimedia.bb
 
-IMAGE_INSTALL_remove = "packagegroup-fsl-gstreamer1.0 packagegroup-fsl-gstreamer1.0-full"
+IMAGE_INSTALL:remove = "packagegroup-fsl-gstreamer1.0 packagegroup-fsl-gstreamer1.0-full"
 
-IMAGE_INSTALL_append = " \
+IMAGE_INSTALL:append = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-pci', 'tappas-apps imdt-tappas-demos', '', d)} \
 "
 

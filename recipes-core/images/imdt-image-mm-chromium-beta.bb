@@ -7,7 +7,7 @@ DESCRIPTION = "This is the core image with IMDT's demo applications"
 require recipes-core/images/imdt-image-multimedia.bb
 
 
-IMAGE_INSTALL_append = " \
+IMAGE_INSTALL:append = " \
     git \
     chromium-ozone-wayland \
     node-electron \

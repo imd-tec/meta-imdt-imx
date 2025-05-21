@@ -12,6 +12,6 @@ inherit cmake pkgconfig
 EXTRA_OECMAKE = ""
 
 DEPENDS = "xsimd xtl"
-RDEPENDS_${PN} += "xsimd xtl"
+RDEPENDS:${PN} += "xsimd xtl"
 
-ALLOW_EMPTY_${PN} = "1"
+ALLOW_EMPTY:${PN} = "1"

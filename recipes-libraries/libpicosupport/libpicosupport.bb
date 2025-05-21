@@ -15,4 +15,4 @@ inherit cmake pkgconfig use-imx-headers
 EXTRA_OECMAKE += "-DCMAKE_CXX_FLAGS='${CXXFLAGS} -I${STAGING_INCDIR_IMX}'"
 
 DEPENDS += "libpng libjpeg-turbo opencv imx-vpuwrap linux-imx-headers"
-RDEPENDS_${PN} += "libpng libjpeg-turbo opencv imx-vpuwrap"
+RDEPENDS:${PN} += "libpng libjpeg-turbo opencv imx-vpuwrap"

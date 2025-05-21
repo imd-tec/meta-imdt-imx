@@ -17,7 +17,7 @@ GOOGLE_DRIVE_URL = "https://drive.usercontent.google.com/download?id=1WTDOAYvLgz
 SRC_URI = "${GOOGLE_DRIVE_URL};downloadfilename=${BPN}-${PV}.tar.gz"
 SRC_URI[sha256sum] = "548ee123cade1c1e00b4d2f95b9faa836e2a4d17c334893e885a79284c52094d"
 
-SRC_URI_append = " \
+SRC_URI:append = " \
     file://imdt-ml-cache.sh \
 "
 
@@ -36,7 +36,7 @@ do_install() {
     install -m 0644 ${WORKDIR}/imdt-yolov4-tiny-352-quantised.tflite ${D}/opt/imdt/pico-demos/models/
 }
 
-FILES_${PN}_append = " \
+FILES:${PN}:append = " \
     /opt/imdt/ml-cache/ \
     /opt/imdt/pico-demos/models/ \
 "

@@ -15,4 +15,4 @@ inherit cmake pkgconfig
 EXTRA_OECMAKE = ""
 
 DEPENDS += "openssl glog"
-RDEPENDS_${PN} += "openssl"
+RDEPENDS:${PN} += "openssl"

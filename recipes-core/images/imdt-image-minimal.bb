@@ -29,17 +29,17 @@ write_issue_file() {
     echo "IMDT Pico BSP v${BSP_VERSION}, Image: ${IMAGE_BASENAME}, Manifest: ${MANIFEST_NAME}" > $ISSUE_FILE
 }
 
-IMAGE_FEATURES_append = " \
+IMAGE_FEATURES:append = " \
     debug-tweaks \
     package-management \
     ssh-server-dropbear \
     hwcodecs \
 "
-SDKIMAGE_FEATURES_append = " \
+SDKIMAGE_FEATURES:append = " \
     staticdev-pkgs \
 "
 
-IMAGE_INSTALL_append = " \
+IMAGE_INSTALL:append = " \
     libgpiod-tools \
     imx-test \
     firmwared \
@@ -58,7 +58,7 @@ IMAGE_INSTALL_append = " \
     imdt-bt-utils \
     imdt-wifi-utils \
     lmsensors \
-    ${@bb.utils.contains('MACHINE_FEATURES', 'nxp8997', 'openobex murata-binaries obexftp glibc-gconv-utf-16 glibc-utils', '', d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'nxp8997-sdio', 'openobex obexftp glibc-gconv-utf-16 glibc-utils', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-ethernet', 'imdt-ethernet-utils', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-can', 'libsocketcan can-utils imdt-can-utils', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-rng', 'imdt-rng-test', '', d)} \

@@ -6,12 +6,12 @@ DESCRIPTION = "This is the core image with IMDT's demo applications"
 
 require recipes-core/images/imdt-image-minimal.bb
 
-IMAGE_FEATURES_append = " \
+IMAGE_FEATURES:append = " \
     nfs-server \
     tools-debug \
 "
 
-IMAGE_INSTALL_append = " \
+IMAGE_INSTALL:append = " \
     curl \
     imdt-pico-demos \
     packagegroup-fsl-gstreamer1.0 \

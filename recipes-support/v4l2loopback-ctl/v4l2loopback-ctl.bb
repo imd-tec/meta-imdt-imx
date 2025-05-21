@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263"
 
 #DEPENDS = "virtual/kernel"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI = "git://github.com/umlaeute/v4l2loopback;protocol=https;branch=main \
 "
@@ -30,5 +30,5 @@ do_install() {
     oe_runmake install-utils DESTDIR=${D} BINDIR=${bindir}
 }
 
-FILES_${PN} += "${bindir}/v4l2loopback-ctl"
+FILES:${PN} += "${bindir}/v4l2loopback-ctl"
 

@@ -26,8 +26,8 @@ do_install() {
 
 
 SYSTEMD_AUTO_ENABLE = "disable"
-SYSTEMD_SERVICE_${PN} = "imdt-bluetooth-init.service"
+SYSTEMD_SERVICE:${PN} = "imdt-bluetooth-init.service"
 
-FILES_${PN} += " \
+FILES:${PN} += " \
     /opt/imdt/bluetooth/start.sh \
 "

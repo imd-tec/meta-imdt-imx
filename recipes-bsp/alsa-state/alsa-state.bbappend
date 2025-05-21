@@ -1,14 +1,14 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
-SRC_URI_append = " \
+SRC_URI:append = " \
     file://mozart.wav \
     file://asound-card-default.conf \
     file://asound-hdmi-default.conf \
     file://set-default-audio-out.sh \
 "
-RDEPENDS_${PN} += "bash"
+RDEPENDS:${PN} += "bash"
 
-do_install_append () {
+do_install:append () {
 
     # install audio files and scripts
     install -d ${D}/opt/imdt/audio/
@@ -24,7 +24,7 @@ do_install_append () {
     install -m 0644 ${WORKDIR}/asound-card-default.conf ${D}${sysconfdir}/asound.conf
 }
 
-FILES_${PN}_append = " \
+FILES:${PN}:append = " \
     /opt/imdt/audio/ \
     ${sysconfdir}/asound-card-default.conf \
     ${sysconfdir}/asound-hdmi-default.conf \

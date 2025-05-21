@@ -15,6 +15,6 @@ do_install() {
     install -m 0644 ${WORKDIR}/git/yolov5m.hef ${D}/opt/imdt/pico-demos/models/
 }
 
-FILES_${PN}_append = " \
+FILES:${PN}:append = " \
     /opt/imdt/pico-demos/models/ \
 "

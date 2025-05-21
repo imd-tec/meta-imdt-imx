@@ -14,12 +14,12 @@ require recipes-core/images/imdt-image-multimedia.bb
 ###          to provide a way for users to reproduce the image used during
 ###          the validation process of i.MX BSP releases.
 
-IMAGE_INSTALL_append = " \
+IMAGE_INSTALL:append = " \
     packagegroup-imx-ml \
     tzdata \
     imagemagick \
 "
 
-TOOLCHAIN_TARGET_TASK_append += "tensorflow-lite-dev armnn-dev onnxruntime-dev"
+TOOLCHAIN_TARGET_TASK:append += "tensorflow-lite-dev armnn-dev onnxruntime-dev"
 
 export IMAGE_BASENAME = "imdt-image-multimedia-ml"

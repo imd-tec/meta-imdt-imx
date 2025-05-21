@@ -7,7 +7,7 @@ DESCRIPTION = "This is the core image with multimedia packages"
 require recipes-core/images/imdt-image-core.bb
 
 ## Select Image Features
-IMAGE_FEATURES_append = " \
+IMAGE_FEATURES:append = " \
     splash \
     tools-profile \
     tools-sdk \
@@ -17,7 +17,7 @@ IMAGE_FEATURES_append = " \
                                                        '', d), d)} \
 "
 
-IMAGE_INSTALL_append = " \
+IMAGE_INSTALL:append = " \
     opencv-apps \
     opencv-samples \
     python3-opencv \

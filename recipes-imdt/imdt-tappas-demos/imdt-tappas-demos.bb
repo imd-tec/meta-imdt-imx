@@ -37,8 +37,8 @@ do_install() {
     install -m 0744 ${WORKDIR}/_slideshow.sh ${D}/opt/imdt/tappas
 }
 
-FILES_${PN} += " \
+FILES:${PN} += " \
     /opt/imdt/tappas/ \
 "
 
-RDEPENDS_${PN} += "bash"
+RDEPENDS:${PN} += "bash"

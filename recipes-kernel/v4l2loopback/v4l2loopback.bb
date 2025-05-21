@@ -21,7 +21,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263"
 
 DEPENDS = "virtual/kernel"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI = "git://github.com/umlaeute/v4l2loopback;protocol=https;branch=main \
     file://0001-Update-Makefile-for-building-ko-under-yocto.patch \

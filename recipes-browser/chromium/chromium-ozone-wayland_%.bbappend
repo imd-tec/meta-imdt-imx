@@ -1,5 +1,5 @@
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 DEPENDS += "virtual/libg2d"
 
@@ -11,16 +11,16 @@ GN_ARGS += '\
     ffmpeg_branding="Chrome" \
 '
 
-SRC_URI_append = " \
+SRC_URI:append = " \
     file://chromium-v4l.patch \
     file://chromium-launch.sh \
 "
 
-do_install_append() {
+do_install:append() {
     install -d ${D}/home/root/
     install -m 0744 ${WORKDIR}/chromium-launch.sh ${D}/home/root/
 }
 
-FILES_${PN} += " \
+FILES:${PN} += " \
     /home/root/ \
 "

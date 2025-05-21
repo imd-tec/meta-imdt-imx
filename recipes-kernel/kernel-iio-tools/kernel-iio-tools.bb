@@ -58,7 +58,7 @@ do_install() {
     oe_runmake -C ${S}/tools/iio install
 }
 
-ALLOW_EMPTY_${PN} = "1"
+ALLOW_EMPTY:${PN} = "1"
 
 #PACKAGES =+ "${PN}"
 

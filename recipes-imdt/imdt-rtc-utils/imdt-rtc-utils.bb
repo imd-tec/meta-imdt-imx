@@ -15,4 +15,4 @@ do_install() {
     install -m 0755 rtc-get-time ${D}/opt/imdt/rtc
 }
 
-FILES_${PN} += " /opt/imdt/rtc/"
+FILES:${PN} += " /opt/imdt/rtc/"

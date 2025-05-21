@@ -1,18 +1,18 @@
 inherit systemd
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 SYSTEMD_AUTO_ENABLE = "enable"
-SYSTEMD_SERVICE_${PN} = "mlanconf.service"
+SYSTEMD_SERVICE:${PN} = "mlanconf.service"
 
-FILES_${PN} += "${systemd_unitdir}/system/mlanconf.service"
+FILES:${PN} += "${systemd_unitdir}/system/mlanconf.service"
 
-SRC_URI_append = " \
+SRC_URI:append = " \
     file://add_wlan.patch;patchdir=${WORKDIR}/nxp-linux-calibration \
     file://switch_regions.sh \
     file://mlanconf.service \
 "
 
-do_install_append () {
+do_install:append () {
         # remove switch_modules script as we do not support this feature
         rm -f ${D}/usr/sbin/switch_module.sh
         rm -f ${D}/usr/sbin/switch_regions.sh

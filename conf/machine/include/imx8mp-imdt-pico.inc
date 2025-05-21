@@ -16,24 +16,26 @@ DDR_FIRMWARE_NAME = " \
 	lpddr4_pmu_train_2d_imem_${DDR_FIRMWARE_VERSION}.bin \
 "
 
+IMX_DEFAULT_BSP = "nxp"
+
 IMXBOOT_TARGETS_BASENAME = "flash_evk"
 WKS_FILE = "imdt-image.wks.in"
 
 MACHINEOVERRIDES =. "imx-boot-container:mx8:mx8m:mx8mp:imdt-pico:"
 
 require conf/machine/include/imx-base.inc
-require conf/machine/include/tune-cortexa53.inc
+require conf/machine/include/arm/armv8a/tune-cortexa53.inc
 
 # nxp8997 is required to load the nxp89xx driver. the specific model of our wifi chip is actually sd8978(iw416)
-MACHINE_FEATURES += "wifi bluetooth bcm43430 imdt-pci optee nxp8997 imdt-ethernet imdt-rng imdt-rtc"
+MACHINE_FEATURES += "wifi bluetooth bcm43430 imdt-pci optee nxp8997-sdio imdt-ethernet imdt-rng imdt-rtc nxpwifi-all-sdio"
 
 # NXP BSP can consume proprietary jailhouse and Marvell drivers
 # OP-TEE is also applicable to NXP BSP, mainline BSP seems not to have
 # a full support for it yet.
-MACHINE_FEATURES_append_use-nxp-bsp = " optee jailhouse nxp8997"
+MACHINE_FEATURES:append_use-nxp-bsp = " optee jailhouse nxp8997"
 
 # Don't include kernels in standard images
-RDEPENDS_${KERNEL_PACKAGE_NAME}-base = ""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-base = ""
 
 # Mainline kernel contains only one DTB file for
 # imx8mpevk machine
@@ -79,7 +81,7 @@ OPTEE_BIN_EXT = "8mp"
 TEE_LOAD_ADDR = "0x56000000"
 
 # Remove Atheros firmware
-MACHINE_FIRMWARE_remove_mx8 = " linux-firmware-ath10k"
+MACHINE_FIRMWARE:remove_mx8 = " linux-firmware-ath10k"
 
 # U-Boot firmware utilities
 PREFERRED_PROVIDER_u-boot-fw-utils = "libubootenv"

@@ -11,17 +11,17 @@ PV = "3.2.0"
 S = "${WORKDIR}/rpm"
 
 DEPENDS = "opencv"
-RDEPENDS_${PN} = "libpicosupport imdt-pico-demo-models tensorflow-lite flatbuffers opencv xtensor libhttpserver glog"
+RDEPENDS:${PN} = "libpicosupport imdt-pico-demo-models tensorflow-lite flatbuffers opencv xtensor libhttpserver glog"
 
 # Copy the contents of the RPM to the root filesystem
-do_install_append() {
+do_install:append() {
     cp -R ${S}/* ${D}
 }
 
 # Executables have already have their symbols stripped
-INSANE_SKIP_${PN}_append = "already-stripped"
+INSANE_SKIP:${PN}:append = "already-stripped"
 
-FILES_${PN} = " \
+FILES:${PN} = " \
     /etc/opt/imdt/pico-demos/ \
     ${systemd_unitdir}/system/ \
     ${systemd_unitdir}/system-preset/ \

@@ -11,16 +11,16 @@ PV = "1.0.0"
 S = "${WORKDIR}/rpm"
 
 DEPENDS = ""
-RDEPENDS_${PN} = "libpicosupport libgpiod libqmi glib-2.0 "
+RDEPENDS:${PN} = "libpicosupport libgpiod libqmi glib-2.0 "
 
 # Copy the contents of the RPM to the root filesystem
-do_install_append() {
+do_install:append() {
     cp -R ${S}/* ${D}
 }
 
 # Executables have already have their symbols stripped
-INSANE_SKIP_${PN}_append = "already-stripped"
+INSANE_SKIP:${PN}:append = "already-stripped"
 
-FILES_${PN} = " \
+FILES:${PN} = " \
     /usr/bin/ \
 "

@@ -6,7 +6,7 @@ DESCRIPTION = "node.js and npm and electron hello world"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 DEPENDS = " gtk+3 nodejs-native cups"
 
@@ -33,11 +33,11 @@ do_install() {
     cp -r ${WORKDIR}/node_modules ${D}/home/root/electron-example
 }
 
-FILES_${PN} += " \
+FILES:${PN} += " \
     /home/root/electron-example \
 "
 
-RDEPENDS_${PN} += " \
+RDEPENDS:${PN} += " \
     alsa-lib \
     nss \
     nspr \

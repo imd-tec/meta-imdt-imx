@@ -17,6 +17,6 @@ do_install() {
     install -m 0755 rng-test.sh ${D}/opt/imdt/rng
 }
 
-FILES_${PN} += " /opt/imdt/rng/"
+FILES:${PN} += " /opt/imdt/rng/"
 
-RDEPENDS_${PN} += "bash"
+RDEPENDS:${PN} += "bash"

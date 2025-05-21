@@ -12,18 +12,18 @@ S = "${WORKDIR}/rpm"
 inherit mime-xdg
 
 # Copy the contents of the RPM to the root filesystem
-do_install_append() {
+do_install:append() {
     cp -R ${S}/* ${D}
 }
 
-FILES_${PN} = "/usr/bin/electron-fiddle \
+FILES:${PN} = "/usr/bin/electron-fiddle \
                /usr/lib/electron-fiddle \
                /usr/lib/.build-id \
                /usr/share/applications/electron-fiddle.desktop \
                /usr/share/icons/hicolor \
 "
 
-RDEPENDS_${PN} += " \
+RDEPENDS:${PN} += " \
     gtk+3 \
     nss \
     nspr \

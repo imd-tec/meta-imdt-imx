@@ -2,24 +2,24 @@
 # Copyright (c) 2022 IMD Technologies
 #
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
-SRC_URI_append = " \
+SRC_URI:append = " \
     file://ap1302_ar1335_single_fw.bin \
     file://BCM4343A1_001.002.009.0153.0520.1DX.hcd \
     file://sdiouartiw416_combo_v0_16.92.21.p84.3.bin \
 "
 
 
-do_install_append() {
+do_install:append() {
     # AP1302 ISP firmware
-    install -m 0644 ${WORKDIR}/ap1302_ar1335_single_fw.bin ${D}/lib/firmware/ap1302_ar1335_single_fw.bin
+    install -m 0644 ${WORKDIR}/ap1302_ar1335_single_fw.bin ${D}${nonarch_base_libdir}/firmware/ap1302_ar1335_single_fw.bin
+# Commented out after switching to scarthgap
+#     # Murata 1DX NVRAM file
+#     cp ${D}/lib/firmware/brcm/brcmfmac43430-sdio.MUR1DX.txt ${D}${nonarch_base_libdir}/firmware/brcm/brcmfmac43430-sdio.imdt,${MACHINE}.txt
 
-    # Murata 1DX NVRAM file
-    cp ${D}/lib/firmware/brcm/brcmfmac43430-sdio.MUR1DX.txt ${D}${nonarch_base_libdir}/firmware/brcm/brcmfmac43430-sdio.imdt,${MACHINE}.txt
-
-    # Murata 1DX Bluetooth firmware
-    install -m 0644 ${WORKDIR}/BCM4343A1_001.002.009.0153.0520.1DX.hcd ${D}${sysconfdir}/firmware/BCM43430A1.1DX.hcd
+#     # Murata 1DX Bluetooth firmware
+#     install -m 0644 ${WORKDIR}/BCM4343A1_001.002.009.0153.0520.1DX.hcd ${D}${sysconfdir}/firmware/BCM43430A1.1DX.hcd
 
     # uninstall previous wifi conf
     rm -f ${D}${nonarch_base_libdir}/firmware/nxp/wifi_mod_para.conf
@@ -33,10 +33,10 @@ do_install_append() {
 
 PACKAGES =+ "${PN}-ap1302"
 
-FILES_${PN}-ap1302 = " \
+FILES:${PN}-ap1302 = " \
     ${nonarch_base_libdir}/firmware/ap1302_ar1335_single_fw.bin \
 "
 
-FILES_${PN}-bcm43430_append = " \
+FILES:${PN}-bcm43430:append = " \
     ${nonarch_base_libdir}/firmware/brcm/brcmfmac43430-sdio.imdt,${MACHINE}.txt \
 "
