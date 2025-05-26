@@ -21,23 +21,16 @@ fi
 
 BUILD_DIR=$1
 
-if [ -d $BUILD_DIR ]; then
-    . ./setup-environment $BUILD_DIR
+if [ -d "${BUILD_DIR}" ]; then
+    . ./setup-environment "${BUILD_DIR}"
 else
 
-    if [ -z $DISTRO ]; then
+    if [ -z "${DISTRO}" ]; then
         display_usage
     fi
 
-    if [ -z $MACHINE ]; then
+    if [ -z "${MACHINE}" ]; then
         display_usage
-    fi
-
-    # export IS_PICO_E to use after the sourcing of setup-environment
-    if [ "${MACHINE}" = "imx8mp-imdt-pico-e" || "${MACHINE}" = "imx8mp-imdt-pico-em" ]; then
-        export IS_PICO_E=1
-    else
-        export IS_PICO_E=0
     fi
 
     # After the sourcing of setup-environment, shell variables will be removed. 
@@ -64,6 +57,7 @@ else
     echo "BBLAYERS += \"\${BSPDIR}/sources/meta-qt5\"" >> ./conf/bblayers.conf
     echo "BBLAYERS += \"\${BSPDIR}/sources/meta-python2\"" >> ./conf/bblayers.conf
     echo "BBLAYERS += \"\${BSPDIR}/sources/meta-swupdate\"" >> ./conf/bblayers.conf
+    echo "BBLAYERS += \"\${BSPDIR}/sources/meta-murata-wireless\"" >> ./conf/bblayers.conf
 
     echo "" >> ./conf/bblayers.conf
     echo "BBLAYERS += \"\${BSPDIR}/sources/meta-imdt-imx\"" >> ./conf/bblayers.conf
@@ -73,12 +67,7 @@ else
         echo "BBLAYERS += \"\${BSPDIR}/sources/meta-imdt-imx-internal\"" >> ./conf/bblayers.conf
     fi
 
-    # Add murata layer in for pico-e only.
-    if [ $IS_PICO_E -eq 1 ]; then
-        echo "BBLAYERS += \"\${BSPDIR}/sources/meta-murata-wireless\"" >> ./conf/bblayers.conf
-    fi
-
-    if [[ -d ../sources/meta-hailo && $IS_PICO_E -eq 1 ]]; then
+    if [ -d ../sources/meta-hailo ]; then
         echo "" >> ./conf/bblayers.conf
         echo "BBLAYERS += \"\${BSPDIR}/sources/meta-hailo/meta-hailo-accelerator\"" >> ./conf/bblayers.conf
         echo "BBLAYERS += \"\${BSPDIR}/sources/meta-hailo/meta-hailo-libhailort\"" >> ./conf/bblayers.conf
