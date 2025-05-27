@@ -6,7 +6,7 @@
 # it is for this reason that we are required to modify the make args, as would ave occurred as a result of x11 being enbaled in packageconfig.
 # The dependencies are also added manually.
 
-EXTRA_OECONF_append = " --enable-x11-backend"
-EXTRA_OECONF_remove = "--disable-x11-backend"
+EXTRA_OECONF_append_gtk+3 = " --enable-x11-backend"
+EXTRA_OECONF_remove_gtk+3 = "--disable-x11-backend"
 
-DEPENDS_append = " at-spi2-atk fontconfig libx11 libxext libxcursor libxi libxdamage libxrandr libxrender libxcomposite libxfixes"
+DEPENDS_append_gtk+3 = " at-spi2-atk fontconfig libx11 libxext libxcursor libxi libxdamage libxrandr libxrender libxcomposite libxfixes"
