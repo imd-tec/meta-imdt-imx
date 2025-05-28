@@ -43,4 +43,7 @@ RDEPENDS_${PN} += " \
     nspr \
     nodejs \
     nodejs-npm \
+    at-spi2-atk \
+    at-spi2-core \
+    libxcomposite \
 "
