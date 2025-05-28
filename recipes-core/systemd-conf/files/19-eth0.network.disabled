@@ -4,7 +4,6 @@ Name=eth0
 [Network]
 Address=172.16.30.100/24
 DHCPServer=true
-IPMasquerade=ipv4
 
 [DHCPServer]
 PoolOffset=200

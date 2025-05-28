@@ -10,6 +10,7 @@ SRC_URI:append = " \
     file://21-ap.network \
     file://25-wlan.network.disabled \
     file://19-eth0.network.disabled \
+    file://config_usb.sh \
 "
 
 FILES:${PN}:append = " \
@@ -19,9 +20,13 @@ FILES:${PN}:append = " \
     ${systemd_unitdir}/network/21-ap.network \
     ${systemd_unitdir}/network/25-wlan.network.disabled \
     ${systemd_unitdir}/network/19-eth0.network.disabled \
+    ${bindir}/config_usb.sh \
 "
 
 do_install:append() {
+    install -d ${D}${bindir}
+    install -m 0755 ${WORKDIR}/config_usb.sh ${D}${bindir}
+    
     install -d ${D}${systemd_unitdir}/network
     install -m 0644 ${WORKDIR}/20-usb0.network ${D}${systemd_unitdir}/network
     install -m 0644 ${WORKDIR}/21-ap.network ${D}${systemd_unitdir}/network
