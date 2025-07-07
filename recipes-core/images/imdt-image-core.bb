@@ -13,7 +13,6 @@ IMAGE_FEATURES:append = " \
 
 IMAGE_INSTALL:append = " \
     curl \
-    imdt-pico-demos \
     packagegroup-fsl-gstreamer1.0 \
     packagegroup-fsl-gstreamer1.0-full \
     packagegroup-fsl-tools-audio \
@@ -22,13 +21,9 @@ IMAGE_INSTALL:append = " \
     alsa-utils \
     alsa-tools \
     libiio \
-    libiio-python3 \
-    kernel-iio-tools \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-pci', 'pciutils', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-pci', 'hailo-firmware hailo-pci hailortcli libhailort', '', d)} \
-    ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-pci', 'libgsthailo libgsthailotools hailo-post-processes tappas-tracers', '', d)} \
-    ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-pci', 'imdt-hailo-demos', '', d)} \
-    imdt-pico-modem \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-pci', 'libgsthailo', '', d)} \
 "
 
 export IMAGE_BASENAME = "imdt-image-core"

@@ -27,9 +27,10 @@ IMAGE_INSTALL:append = " \
     packagegroup-fsl-tools-gpu-external \
     packagegroup-fsl-tools-testapps \
     packagegroup-fsl-tools-benchmark \
-    packagegroup-imx-isp \
     packagegroup-imx-security \
     yavta \
     ${@bb.utils.contains('DISTRO_FEATURES', 'x11 wayland', 'weston-xwayland xterm', '', d)} \
 "
+# Commented out since it doesn't build with the current BSP
+#IMAGE_INSTALL:append =     " packagegroup-imx-isp"
 export IMAGE_BASENAME = "imdt-image-multimedia"
