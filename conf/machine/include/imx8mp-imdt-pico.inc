@@ -4,8 +4,7 @@
 #@DESCRIPTION: Machine configuration for the IMDT Pico Board
 #@MAINTAINER: William Bagshaw <william.bagshaw@imd-tec.com>
 
-#
-KERNEL_DEVICETREE_BASENAME = "${MACHINE}"
+KERNEL_DEVICETREE_BASENAME ?= "${MACHINE}"
 
 # Set DDR FIRMWARE
 DDR_FIRMWARE_VERSION = "202006"
@@ -27,7 +26,7 @@ require conf/machine/include/imx-base.inc
 require conf/machine/include/arm/armv8a/tune-cortexa53.inc
 
 # nxp8997 is required to load the nxp89xx driver. the specific model of our wifi chip is actually sd8978(iw416)
-MACHINE_FEATURES += "wifi bluetooth bcm43430 imdt-pci optee nxp8997-sdio imdt-ethernet imdt-rng imdt-rtc nxpwifi-all-sdio"
+MACHINE_FEATURES += "wifi bluetooth optee nxpiw416-sdio imdt-pci imdt-ethernet imdt-can imdt-rng imdt-rtc"
 
 # NXP BSP can consume proprietary jailhouse and Marvell drivers
 # OP-TEE is also applicable to NXP BSP, mainline BSP seems not to have
@@ -39,11 +38,12 @@ RDEPENDS:${KERNEL_PACKAGE_NAME}-base = ""
 
 # Mainline kernel contains only one DTB file for
 # imx8mpevk machine
-KERNEL_DEVICETREE = " \
+KERNEL_DEVICETREE ?= " \
     freescale/${KERNEL_DEVICETREE_BASENAME}.dtb \
+	freescale/imx8mp-imdt-pico-e.dtbo	\
 "
 
-UBOOT_DTB_NAME = "${KERNEL_DEVICETREE_BASENAME}.dtb"
+UBOOT_DTB_NAME ?= "${KERNEL_DEVICETREE_BASENAME}.dtb"
 
 IMX_DEFAULT_BOOTLOADER_use-nxp-bsp = "u-boot-imx"
 IMX_DEFAULT_BOOTLOADER_use-mainline-bsp = "u-boot-fslc"
@@ -86,5 +86,3 @@ MACHINE_FIRMWARE:remove_mx8 = " linux-firmware-ath10k"
 # U-Boot firmware utilities
 PREFERRED_PROVIDER_u-boot-fw-utils = "libubootenv"
 
-#couldn't find a way to get this to work layer.conf conditionally, thought here is the best place for it as it only gets included when building for this machine which in turn has the murata layer.
-BBMASK += "meta-murata-wireless/recipes-kernel/linux/linux-imx_%.bbappend"

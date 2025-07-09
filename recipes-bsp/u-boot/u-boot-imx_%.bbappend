@@ -5,4 +5,4 @@
 SUMMARY = "U-Boot bootloader provided and supported by IMD Technologies"
 
 SRC_URI = "git://github.com/imd-tec/uboot-imdt.git;protocol=https;branch=imdt-v2024.04"
-SRCREV = "8e53517bfa8134d4dfcea3341e915c01cc4aedcc"
+SRCREV = "b15d2c2a9c8af835ba1d5389967218ce1bb7ae4b"

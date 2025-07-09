@@ -9,7 +9,6 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 
 SRC_URI = " \
     file://imdt-bluetooth-init.service \
-    file://start.sh \
     file://start_bt_1xk.sh \
 "
 
@@ -20,7 +19,6 @@ do_install() {
     install -m 0644 ${WORKDIR}/imdt-bluetooth-init.service ${D}${systemd_system_unitdir}
 
     install -d ${D}/opt/imdt/bluetooth
-    install -m 0744 ${WORKDIR}/start.sh ${D}/opt/imdt/bluetooth
     install -m 0744 ${WORKDIR}/start_bt_1xk.sh ${D}/opt/imdt/bluetooth/start.sh
 }
 

@@ -3,6 +3,6 @@
 ## Quick Start
 
 ```
-$ DISTRO=imdt-imx-xwayland MACHINE=imx8mp-imdt-pico-em . imdt-setup-environment <build directory>
+$ DISTRO=imdt-imx-xwayland MACHINE=imx8mp-imdt-pico . imdt-setup-environment build-xwayland
 $ bitbake imdt-image-core
 ```
