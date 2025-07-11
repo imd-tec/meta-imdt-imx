@@ -1,0 +1,12 @@
+diff --git a/nxp/wifi_mod_para.conf b/nxp/wifi_mod_para.conf
+index cfdc16f..4bcb6c5 100644
+--- a/nxp/wifi_mod_para.conf
++++ b/nxp/wifi_mod_para.conf
+@@ -144,6 +144,7 @@ SDIW416 = {
+ 	auto_ds=1
+ 	host_mlme=1
+ 	fw_name=nxp/sdiouartiw416_combo_v0.bin
++	sta_name=wlan
+ }
+ 
+ SD8801 = {
