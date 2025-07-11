@@ -1,0 +1,1 @@
+recipes-kernel/linux-firmware/files/ap1302_ar0521_single_fw_2lane.bin filter=lfs diff=lfs merge=lfs -text

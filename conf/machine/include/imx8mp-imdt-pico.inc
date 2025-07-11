@@ -5,6 +5,7 @@
 #@MAINTAINER: William Bagshaw <william.bagshaw@imd-tec.com>
 
 KERNEL_DEVICETREE_BASENAME ?= "${MACHINE}"
+CAMERA_OVERLAYS ?= "freescale/imx8mp-imdt-pico-ar0521.dtbo"
 
 # Set DDR FIRMWARE
 DDR_FIRMWARE_VERSION = "202006"
@@ -41,6 +42,7 @@ RDEPENDS:${KERNEL_PACKAGE_NAME}-base = ""
 KERNEL_DEVICETREE ?= " \
     freescale/${KERNEL_DEVICETREE_BASENAME}.dtb \
 	freescale/imx8mp-imdt-pico-e.dtbo	\
+	${CAMERA_OVERLAYS} \
 "
 
 UBOOT_DTB_NAME ?= "${KERNEL_DEVICETREE_BASENAME}.dtb"
