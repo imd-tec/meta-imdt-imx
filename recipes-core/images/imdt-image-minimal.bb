@@ -9,24 +9,21 @@ inherit core-image
 ROOTFS_POSTPROCESS_COMMAND += "write_issue_file;"
 
 write_issue_file() {
+
     ISSUE_FILE="${IMAGE_ROOTFS}/etc/issue"
-    MANIFEST_DIR="${TOPDIR}/../.repo/manifests"
     BSP_VERSION="0.0.0"
-    MANIFEST_NAME="Unknown"
+    KAS_GIT_REPO_DIR="${TOPDIR}/.."
+    KAS_GIT_REPO_DIR_CONTAINER="/repo"
 
-    if [ -d "${MANIFEST_DIR}" ]; then
-        INCLUDED_MANIFEST=$(sed -n 's/.*<include name="\([^"]*\)".*/\1/p' ${TOPDIR}/../.repo/manifest.xml)
-        INCLUDED_MANIFEST_PATH="${MANIFEST_DIR}/${INCLUDED_MANIFEST}"
-
-        if [ -f "${INCLUDED_MANIFEST_PATH}" ]; then
-            LINE=$(sed -n 's/.*<manifest \([^>]*\).*/\1/p' ${INCLUDED_MANIFEST_PATH})
-            MANIFEST_NAME=$(echo $LINE | sed -n 's/.*name="\([^"]*\)".*/\1/p')
-            BSP_VERSION=$(echo $LINE | sed -n 's/.*version="\([^"]*\)".*/\1/p')
-            [ -z "$BSP_VERSION" ] && BSP_VERSION="NO_VERSION_TAG"
-        fi
+    if [ -d "${KAS_GIT_REPO_DIR}/.git" ]; then
+        GIT_DIR="${KAS_GIT_REPO_DIR}/.git"
+        BSP_VERSION=$(git --git-dir="$GIT_DIR" describe --tags --always 2>/dev/null)
+    elif [ -d "${KAS_GIT_REPO_DIR_CONTAINER}/.git" ]; then
+        GIT_DIR="${KAS_GIT_REPO_DIR_CONTAINER}/.git"
+        BSP_VERSION=$(git --git-dir="$GIT_DIR" describe --tags --always 2>/dev/null)
     fi
-
-    echo "IMDT Pico BSP v${BSP_VERSION}, Image: ${IMAGE_BASENAME}, Manifest: ${MANIFEST_NAME}" > $ISSUE_FILE
+    
+    echo "IMDT Pico BSP ${BSP_VERSION}, Image: ${IMAGE_BASENAME}" > "${ISSUE_FILE}"
 }
 
 IMAGE_FEATURES:append = " \
@@ -46,9 +43,6 @@ IMAGE_INSTALL:append = " \
     packagegroup-imx-core-tools \
     packagegroup-imx-security \
     linux-firmware-ap1302 \
-    swupdate \
-    swupdate-progress \
-    swupdate-www \
     u-boot-fw-utils \
     wpa-supplicant \
     wireless-tools \
