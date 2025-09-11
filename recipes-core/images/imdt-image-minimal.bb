@@ -52,6 +52,11 @@ IMAGE_INSTALL:append = " \
     imdt-bt-utils \
     imdt-wifi-utils \
     lmsensors \
+	swupdate \
+	swupdate-progress \
+	swupdate-www \
+	swupdate-tools \
+    u-boot-imx \
     ${@bb.utils.contains('MACHINE_FEATURES', 'nxp8997-sdio', 'openobex obexftp glibc-gconv-utf-16 glibc-utils', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-ethernet', 'imdt-ethernet-utils', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-can', 'libsocketcan can-utils imdt-can-utils', '', d)} \

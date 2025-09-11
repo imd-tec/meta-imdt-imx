@@ -1,4 +1,5 @@
 #!/bin/sh
+set -x
 
 if [ $# -lt 1 ]; then
 	exit 0;
@@ -16,12 +17,12 @@ function get_current_root_device
 function get_update_part
 {
 	CURRENT_PART="${CURRENT_ROOT: -1}"
-	if [ $CURRENT_PART = "2" ]; then
-        UPDATE_BOOT_PART="3";
-		UPDATE_ROOT_PART="4";
+	if [ $CURRENT_PART = "3" ]; then
+        UPDATE_BOOT_PART="4";
+		UPDATE_ROOT_PART="5";
 	else
-        UPDATE_BOOT_PART="1";
-		UPDATE_ROOT_PART="2";
+        UPDATE_BOOT_PART="2";
+		UPDATE_ROOT_PART="3";
 	fi
 }
 
@@ -32,6 +33,15 @@ function get_update_device
 }
 
 if [ $1 == "preinst" ]; then
+
+	#!/bin/bash
+	echo "This script is: $0"
+	echo "Called by: $(ps -o comm= $PPID)"
+	if [[ "$0" == "$BASH_SOURCE" ]]; then
+		echo "The script is executed directly."
+	else
+		echo "The script is being sourced."
+	fi
 
 	# get the current root device
 	get_current_root_device
@@ -57,4 +67,6 @@ if [ $1 == "postinst" ]; then
 
 	fw_setenv mmcpart $UPDATE_BOOT_PART
     fw_setenv mmcroot "$UPDATE_ROOT_DEV rootwait rw"
+
+	sync
 fi

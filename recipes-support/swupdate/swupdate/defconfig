@@ -2,6 +2,7 @@
 # Automatically generated file; DO NOT EDIT.
 # Swupdate Configuration
 #
+CONFIG_HAVE_DOT_CONFIG=y
 
 #
 # Swupdate Settings
@@ -13,7 +14,7 @@
 # CONFIG_CURL is not set
 # CONFIG_CURL_SSL is not set
 # CONFIG_DISKFORMAT is not set
-# CONFIG_SYSTEMD is not set
+CONFIG_SYSTEMD=y
 CONFIG_DEFAULT_CONFIG_FILE="/etc/swupdate.cfg"
 CONFIG_SCRIPTS=y
 CONFIG_HW_COMPATIBILITY=y
@@ -25,6 +26,7 @@ CONFIG_SW_VERSIONS_FILE="/etc/sw-versions"
 #
 CONFIG_SOCKET_CTRL_PATH=""
 CONFIG_SOCKET_PROGRESS_PATH=""
+CONFIG_SOCKET_REMOTE_HANDLER_DIRECTORY="/tmp/"
 CONFIG_MTD=y
 CONFIG_LUA=y
 CONFIG_LUAPKG="lua"
@@ -35,8 +37,6 @@ CONFIG_LUAPKG="lua"
 #
 CONFIG_CROSS_COMPILE=""
 CONFIG_SYSROOT=""
-CONFIG_EXTRA_CFLAGS=" -O2 -pipe -g -feliminate-unused-debug-types -fmacro-prefix-map=/home/pthomson/projects/internal/pico-bsp/development/build-swupdate/tmp/work/cortexa53-crypto-poky-linux/swupdate/2021.11-r0=/usr/src/debug/swupdate/2021.11-r0                      -fdebug-prefix-map=/home/pthomson/projects/internal/pico-bsp/development/build-swupdate/tmp/work/cortexa53-crypto-poky-linux/swupdate/2021.11-r0=/usr/src/debug/swupdate/2021.11-r0                      -fdebug-prefix-map=/home/pthomson/projects/internal/pico-bsp/development/build-swupdate/tmp/work/cortexa53-crypto-poky-linux/swupdate/2021.11-r0/recipe-sysroot=                      -fdebug-prefix-map=/home/pthomson/projects/internal/pico-bsp/development/build-swupdate/tmp/work/cortexa53-crypto-poky-linux/swupdate/2021.11-r0/recipe-sysroot-native= "
-CONFIG_EXTRA_LDFLAGS="-Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed -Wl,-z,relro,-z,now"
 CONFIG_EXTRA_LDLIBS=""
 
 #
@@ -50,9 +50,7 @@ CONFIG_UBOOT=y
 # CONFIG_BOOTLOADER_NONE is not set
 # CONFIG_BOOTLOADER_GRUB is not set
 CONFIG_UBOOT_FWENV="/etc/fw_env.config"
-CONFIG_UPDATE_STATE_CHOICE_NONE=y
-# CONFIG_UPDATE_STATE_CHOICE_BOOTLOADER is not set
-CONFIG_UBOOT_DEFAULTENV="/etc/u-boot-initial-env"
+CONFIG_UBOOT_DEFAULTENV="/env/u-boot-initial-env.bin"
 # CONFIG_SSL_IMPL_NONE is not set
 CONFIG_SSL_IMPL_OPENSSL=y
 # CONFIG_SSL_IMPL_WOLFSSL is not set

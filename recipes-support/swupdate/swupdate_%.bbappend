@@ -5,6 +5,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 SRC_URI += " \
+    file://0001-Rebrand-the-SWUpdate-UI.patch \
     file://defconfig \
 "
 do_install:append() {

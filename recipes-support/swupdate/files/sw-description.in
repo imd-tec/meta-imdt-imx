@@ -6,27 +6,7 @@ software =
     {
         hardware-compatibility: [ "1.0" ];
 
-        files:
-        (
-            {
-                filename = "Image";
-                device = "/dev/update-boot";
-                path = "Image";
-                filesystem = "vfat";
-            },
-            {
-                filename = "@DTB@";
-                device = "/dev/update-boot";
-                path = "@DTB@";
-                filesystem = "vfat";
-            },
-            {
-                filename = "tee.bin";
-                device = "/dev/update-boot";
-                path = "tee.bin";
-                filesystem = "vfat";
-            }
-        );
+        @FILES_BLOCK@
 
         images:
         (
