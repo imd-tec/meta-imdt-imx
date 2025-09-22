@@ -63,7 +63,7 @@ IMAGE_INSTALL:append = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-rng', 'imdt-rng-test', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'imdt-rtc', 'imdt-rtc-utils', '', d)} \
 "
-IMAGE_FSTYPES="wic.gz tar.gz"
+IMAGE_FSTYPES="wic.gz tar.zst"
 # Set the default target
 SYSTEMD_DEFAULT_TARGET = "multi-user.target"
 

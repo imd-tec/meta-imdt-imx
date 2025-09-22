@@ -14,7 +14,7 @@ IMDT_IMAGE_NAME = "${IMDT_BASE_IMAGE}-${MACHINE}.rootfs"
 SWUPDATE_IMAGES = " \
     Image \
     tee.bin \
-    ${IMDT_IMAGE_NAME}.tar.gz \
+    ${IMDT_IMAGE_NAME}.tar.zst \
 "
 
 python __anonymous() {
@@ -57,7 +57,7 @@ python do_generate_sw_description() {
         content = infile.read()
 
     # Replace fixed placeholders
-    content = content.replace('@TARFILE@', d.getVar('IMDT_IMAGE_NAME') + ".tar.gz")
+    content = content.replace('@TARFILE@', d.getVar('IMDT_IMAGE_NAME') + ".tar.zst")
     content = content.replace('@MACHINE@', d.getVar('MACHINE'))
 
     # Dynamically create 'files' entries
