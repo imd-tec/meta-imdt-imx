@@ -8,3 +8,5 @@ inherit swupdate
 
 # Dependencies to build before creating the SWUpdate image
 IMDT_BASE_IMAGE = "imdt-image-multimedia"
+
+IMDT_ROOTFS_SUFFIX = "tar.zst"

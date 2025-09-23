@@ -13,7 +13,7 @@ software =
             {
                 filename = "@TARFILE@";
                 type = "archive";
-                compressed = "zstd";
+                compressed = "@COMPRESSION_TYPE@";
                 device = "/dev/update-root";
                 filesystem = "ext4";
                 path = "/";

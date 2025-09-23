@@ -31,6 +31,9 @@ IMAGE_INSTALL:append = " \
     yavta \
     ${@bb.utils.contains('DISTRO_FEATURES', 'x11 wayland', 'weston-xwayland xterm', '', d)} \
 "
+
+IMAGE_FSTYPES="wic.gz tar.zst"
+
 # Commented out since it doesn't build with the current BSP
 #IMAGE_INSTALL:append =     " packagegroup-imx-isp"
 export IMAGE_BASENAME = "imdt-image-multimedia"

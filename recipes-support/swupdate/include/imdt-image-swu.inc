@@ -11,10 +11,12 @@ SRC_URI = " \
 
 IMDT_IMAGE_NAME = "${IMDT_BASE_IMAGE}-${MACHINE}.rootfs" 
 
+IMDT_ROOTFS_SUFFIX = "tar.gz"
+
 SWUPDATE_IMAGES = " \
     Image \
     tee.bin \
-    ${IMDT_IMAGE_NAME}.tar.zst \
+    ${IMDT_IMAGE_NAME}.${IMDT_ROOTFS_SUFFIX} \
 "
 
 python __anonymous() {
@@ -57,7 +59,7 @@ python do_generate_sw_description() {
         content = infile.read()
 
     # Replace fixed placeholders
-    content = content.replace('@TARFILE@', d.getVar('IMDT_IMAGE_NAME') + ".tar.zst")
+    content = content.replace('@TARFILE@', d.getVar('IMDT_IMAGE_NAME') + "." + d.getVar('IMDT_ROOTFS_SUFFIX'))
     content = content.replace('@MACHINE@', d.getVar('MACHINE'))
 
     # Dynamically create 'files' entries
@@ -79,6 +81,15 @@ python do_generate_sw_description() {
 
     # Inject the generated files block
     content = content.replace('@FILES_BLOCK@', files_block)
+
+    # Replace the @COMPRESSION_TYPE@ placeholder
+    rootfs_suffix = d.getVar('IMDT_ROOTFS_SUFFIX')
+    if rootfs_suffix == "tar.zst":
+        compression_type = 'zstd'
+    else:
+        compression_type = 'zlib'
+    content = content.replace('@COMPRESSION_TYPE@', compression_type)
+    
 
     # Write the final sw-description
     with open(sw_desc_output_path, 'w') as outfile:
