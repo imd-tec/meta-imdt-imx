@@ -1,0 +1,10 @@
+[Unit]
+Description=Runs imdt-swupdate-doctor once at Boot to tell u-boot the OTA update was successful by resetting the bootcount and update_available flag
+
+[Service]
+Type=oneshot
+ExecStart=/opt/imdt/swupdate-doctor/reset-bootcount.sh
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target

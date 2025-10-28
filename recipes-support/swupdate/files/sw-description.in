@@ -19,7 +19,12 @@ software =
                 path = "/";
             }
         );
-
+        bootenv: (
+            {
+                name = "upgrade_available";
+                value = "1";
+            }
+        );
         scripts:
         (
             {
