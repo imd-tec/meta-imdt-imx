@@ -6,6 +6,10 @@
 
 KERNEL_DEVICETREE_BASENAME ?= "${MACHINE}"
 CAMERA_OVERLAYS ?= "freescale/imx8mp-imdt-pico-ar0521.dtbo"
+DISPLAY_OVERLAYS ?= " \
+	freescale/imx8mp-imdt-pico-display-DSI.dtbo \
+	freescale/imx8mp-imdt-pico-display-HDMI.dtbo \
+" 
 
 # Set DDR FIRMWARE
 DDR_FIRMWARE_VERSION = "202006"
@@ -43,6 +47,7 @@ KERNEL_DEVICETREE ?= " \
     freescale/${KERNEL_DEVICETREE_BASENAME}.dtb \
 	freescale/imx8mp-imdt-pico-e.dtbo	\
 	${CAMERA_OVERLAYS} \
+	${DISPLAY_OVERLAYS} \
 "
 
 UBOOT_DTB_NAME ?= "${KERNEL_DEVICETREE_BASENAME}.dtb"
