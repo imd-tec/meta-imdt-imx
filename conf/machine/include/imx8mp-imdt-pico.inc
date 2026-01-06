@@ -27,9 +27,6 @@ WKS_FILE = "imdt-image.wks.in"
 
 MACHINEOVERRIDES =. "imx-boot-container:mx8:mx8m:mx8mp:imdt-pico:"
 
-require conf/machine/include/imx-base.inc
-require conf/machine/include/arm/armv8a/tune-cortexa53.inc
-
 # nxp8997 is required to load the nxp89xx driver. the specific model of our wifi chip is actually sd8978(iw416)
 MACHINE_FEATURES += "wifi bluetooth optee nxpiw416-sdio imdt-pci imdt-ethernet imdt-can imdt-rng imdt-rtc"
 

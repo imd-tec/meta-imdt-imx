@@ -34,6 +34,4 @@ IMAGE_INSTALL:append = " \
 
 IMAGE_FSTYPES="wic.gz tar.zst"
 
-# Commented out since it doesn't build with the current BSP
-#IMAGE_INSTALL:append =     " packagegroup-imx-isp"
 export IMAGE_BASENAME = "imdt-image-multimedia"
