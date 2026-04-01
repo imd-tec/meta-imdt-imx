@@ -9,21 +9,7 @@ inherit core-image
 ROOTFS_POSTPROCESS_COMMAND += "write_issue_file;"
 
 write_issue_file() {
-
-    ISSUE_FILE="${IMAGE_ROOTFS}/etc/issue"
-    BSP_VERSION="0.0.0"
-    KAS_GIT_REPO_DIR="${TOPDIR}/.."
-    KAS_GIT_REPO_DIR_CONTAINER="/repo"
-
-    if [ -d "${KAS_GIT_REPO_DIR}/.git" ]; then
-        GIT_DIR="${KAS_GIT_REPO_DIR}/.git"
-        BSP_VERSION=$(git --git-dir="$GIT_DIR" describe --tags --always 2>/dev/null)
-    elif [ -d "${KAS_GIT_REPO_DIR_CONTAINER}/.git" ]; then
-        GIT_DIR="${KAS_GIT_REPO_DIR_CONTAINER}/.git"
-        BSP_VERSION=$(git --git-dir="$GIT_DIR" describe --tags --always 2>/dev/null)
-    fi
-    
-    echo "IMDT Pico BSP ${BSP_VERSION}, Image: ${IMAGE_BASENAME}" > "${ISSUE_FILE}"
+    echo "${DISTRO_NAME} ${DISTRO_VERSION}, Image: ${IMAGE_BASENAME}" > ${IMAGE_ROOTFS}${sysconfdir}/issue
 }
 
 IMAGE_FEATURES:append = " \
