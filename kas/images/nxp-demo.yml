@@ -1,0 +1,5 @@
+header: 
+  version: 15
+
+machine: imx8mp-imdt-pico-armv8a
+target: imdt-image-nxp-demo

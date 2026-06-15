@@ -1,0 +1,15 @@
+
+header:
+  version: 15
+  includes:
+    - includes/base.yml
+    - includes/imdt.yml
+    - machines/imdt-pico.yml
+    - includes/hailo.yml
+#    - includes/nxp-demo-exp.yml
+
+
+
+local_conf_header:
+  buildinfo: |
+    INHERIT += "image-buildinfo"

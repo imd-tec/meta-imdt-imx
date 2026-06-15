@@ -1,0 +1,94 @@
+header: 
+  version: 15
+
+repos:
+  poky:
+    url: "https://git.yoctoproject.org/git/poky"
+    commit: 200d12b6a58ad961d60a7774ca0f7a9d29498724
+    layers:
+      meta:
+      meta-poky:
+      meta-yocto-bsp:
+    path: sources/poky/
+  meta-openembedded:
+    url: https://github.com/openembedded/meta-openembedded.git
+    commit: 72018ca1b1a471226917e8246e8bbf9a374ccf97
+    layers:
+      meta-oe:
+      meta-multimedia:
+      meta-python:
+      meta-filesystems:
+      meta-gnome:
+      meta-networking:
+    path: sources/meta-openembedded
+  meta-freescale:
+    url: https://github.com/Freescale/meta-freescale.git
+    commit: 0627128b341cfb2bef7a0832ce8cac0ce1127f13
+    path: sources/meta-freescale
+
+  meta-freescale-3rdparty:
+    url: https://github.com/Freescale/meta-freescale-3rdparty.git
+    commit: 6c063450d464eb2f380443c7d9af1b94ce9b9d75
+    path: sources/meta-freescale-3rdparty
+
+  meta-freescale-distro:
+    url: https://github.com/Freescale/meta-freescale-distro.git
+    commit: b9d6a5d9931922558046d230c1f5f4ef6ee72345
+    path: sources/meta-freescale-distro
+
+  meta-imx:
+    url: https://github.com/nxp-imx/meta-imx.git
+    commit: e1ec1a20d573e3913f4ad90fa36546ed2bc87715 # tag: rel_imx_6.6.52_2.2.1
+    layers:
+      meta-imx-bsp:
+      meta-imx-sdk:
+      meta-imx-ml:
+    path: sources/meta-imx
+
+  meta-clang:
+    url: https://github.com/kraj/meta-clang.git
+    commit: 2b7433611d80f6d0ee1b04156fa91fc73d3c2665 
+    path: sources/meta-clang
+
+  meta-qt6:
+    url: https://github.com/YoeDistro/meta-qt6
+    commit: 586a6cb5aec755803a3be3cec359baafe89d6432
+    path: sources/meta-qt6
+
+  meta-swupdate:
+    url: https://github.com/sbabic/meta-swupdate.git
+    commit: 43ef322cbf5b91d84b007c343cf73e9b01699594
+    path: sources/meta-swupdate
+
+  meta-arm:
+    url: https://git.yoctoproject.org/git/meta-arm
+    commit: 950a4afce46a359def2958bd9ae33fc08ff9bb0d
+    layers:
+      meta-arm:
+      meta-arm-bsp:
+      meta-arm-systemready:
+      meta-arm-toolchain:
+    path: sources/meta-arm
+
+env:
+  IMDT_DISTRO_VERSION: "0.0.0" # Place holder - will be replaced by the actual tag in the build environment
+
+# Append to local.conf
+local_conf_header:
+  IMX_Header: |
+      DISTRO ?= "imdt-imx-xwayland"
+      EXTRA_IMAGE_FEATURES ?= "debug-tweaks"
+      USER_CLASSES ?= "buildstats"
+      PATCHRESOLVE = "noop"
+      BB_DISKMON_DIRS ??= "\
+          STOPTASKS,${TMPDIR},1G,100K \
+          STOPTASKS,${DL_DIR},1G,100K \
+          STOPTASKS,${SSTATE_DIR},1G,100K \
+          STOPTASKS,/tmp,100M,100K \
+          HALT,${TMPDIR},100M,1K \
+          HALT,${DL_DIR},100M,1K \
+          HALT,${SSTATE_DIR},100M,1K \
+          HALT,/tmp,10M,1K"
+      PACKAGECONFIG:append:pn-qemu-system-native = " sdl"
+      CONF_VERSION = "2"
+      ACCEPT_FSL_EULA = "1"

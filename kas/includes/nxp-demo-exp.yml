@@ -1,0 +1,7 @@
+header:
+  version: 15
+repos:
+  meta-nxp-demo-experience:
+    url: https://github.com/nxp-imx-support/meta-nxp-demo-experience.git
+    commit: e8e646e22b1f926aac83bb7ad522efa9cd8ccc45 # tag: rel_imx_6.6.52_2.2.0
+    path: sources/meta-nxp-demo-experience

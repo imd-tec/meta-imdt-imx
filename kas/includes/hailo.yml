@@ -1,0 +1,11 @@
+header:
+  version: 15
+
+repos:
+  meta-hailo:
+    url: https://github.com/imd-tec/meta-hailo-imdt.git
+    commit: 6c0a352342e2332fe65ed7c1a0a0925e3fd41e2a
+    path: sources/meta-hailo
+    layers:
+      meta-hailo-accelerator:
+      meta-hailo-libhailort:

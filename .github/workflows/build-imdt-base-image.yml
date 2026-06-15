@@ -1,0 +1,32 @@
+name: Build IMDT Images
+
+on:
+  push:
+    branches:
+      - 'scarthgap'
+    tags:
+      - '**'
+  pull_request:
+    branches:
+      - 'scarthgap'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - kas-config: 'kas/imdt-pico-bsp.yml:kas/images/core.yml'
+            artifact-name: 'imdt-image-core'
+          - kas-config: 'kas/imdt-pico-bsp.yml:kas/images/multimedia.yml'
+            artifact-name: 'imdt-image-multimedia'
+    uses: imd-tec/kas-gh-ci/.github/workflows/kas-build.yml@master
+    with:
+      kas-config: ${{ matrix.kas-config }}
+      machine: 'imx8mp-imdt-pico'
+      artifact-name: ${{ matrix.artifact-name }}
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
